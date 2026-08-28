@@ -157,3 +157,9 @@ upstream-review-report.md
 dependency-freshness-report.md
 .pytest_cache/
 .ruff_cache/
+
+# Fork overlay: never commit a user vault that landed in the product checkout.
+# Root-only so templates/vault/wiki and examples/sample-vault stay tracked.
+/wiki/
+/inbox/
+/.raw/

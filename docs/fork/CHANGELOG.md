@@ -18,3 +18,5 @@
 - 根目錄 `README.md`、`AGENTS.md`、`CONTRIBUTING.md`、`SECURITY.md`、
   `CODE_OF_CONDUCT.md` 加上 fork overlay；產品正文不改寫。不新增 `CLAUDE.md`（產品契約）。
 - `ISSUE_TEMPLATE/config.yml` 導流：本線 overlay 問題走 SanHsien，產品行為走上游。
+- 根目錄 `.gitignore` 加上 `/wiki/`、`/inbox/`、`/.raw/`，避免把 checkout 當 vault 誤提交。
+- `config/release-allowlist.json` 排除 `docs/fork/**`，公開 zip 不帶 fork 維護文件。

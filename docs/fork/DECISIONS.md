@@ -64,7 +64,21 @@
 
 **限制**：同步上游時若上游拿掉 marketplace.json 並加入 `CLAUDE.md`，再考慮 overlay，而不是自己先加。
 
-## 2026-08-28：不啟用 Dependabot 自動合併
+## 2026-08-28：根目錄 vault 路徑加入 gitignore
+
+**決定**：產品根 `.gitignore` 加上 `/wiki/`、`/inbox/`、`/.raw/`（只限 repo 根目錄）。
+
+**理由**：產品契約說 checkout 不是用戶 vault，但 gitignore 先前只忽略 `.vault-meta/` 執行期檔。有人把筆記開在 checkout 裡時，`wiki/` 可以直接被 `git add`。根前綴不影響 `templates/vault/wiki` 與 `examples/sample-vault`。
+
+**限制**：不忽略 `templates/` 或 `examples/` 底下的示範 vault。
+
+## 2026-08-28：公開產物排除 docs/fork
+
+**決定**：`config/release-allowlist.json` 的 `exclude_globs` 加上 `docs/fork/**`。
+
+**理由**：`docs` 在 `include_roots`，否則 `release build` 會把本 fork 的繁中維護文件打進公開 zip。這不是產品文件。
+
+**限制**：這是對產品 allowlist 的已記錄 fork 修正。merge 上游時若該檔被重寫，要把這條 exclude 加回去。
 
 **決定**：Dependabot 只開 PR；CI 與人工讀 diff 通過後才合併。
 

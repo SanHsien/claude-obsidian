@@ -211,6 +211,16 @@ def test_gitignore_covers_overlay_reports() -> None:
     assert ".venv/" in text
     assert "upstream-review-report.md" in text
     assert "dependency-freshness-report.md" in text
+    assert "/wiki/" in text.splitlines()
+    assert "/inbox/" in text.splitlines()
+    assert "/.raw/" in text.splitlines()
+
+
+def test_release_allowlist_excludes_fork_docs() -> None:
+    allowlist = json.loads(
+        (ROOT / "config" / "release-allowlist.json").read_text(encoding="utf-8")
+    )
+    assert "docs/fork/**" in allowlist["exclude_globs"]
 
 
 def test_review_is_windows_first_record() -> None:

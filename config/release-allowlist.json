@@ -20,6 +20,7 @@
     ".vault-meta/**",
     "docs/**/*.pdf",
     "docs/audits/**",
+    "docs/fork/**",
     "docs/releases/**",
     "scripts/baseline-v16.py",
     "scripts/benchmark-runner.py",

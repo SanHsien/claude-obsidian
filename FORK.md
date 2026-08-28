@@ -29,7 +29,7 @@
 | `docs/fork/` | Windows 開發、上游審查、決策、本 fork 變更紀錄 |
 | `REVIEW.md` | 風險快照，不是每個一般 bug 的流水帳 |
 
-產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/`、`config/`、`.claude-plugin/` 以上游為準，除非有已記錄的 fork 修正。
+產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/` 以上游為準，除非有已記錄的 fork 修正。目前已記錄的產品檔修正只有 `config/release-allowlist.json` 排除 `docs/fork/**`，以及根目錄 `.gitignore` 的 vault 路徑。
 
 ## 分支與 remote
 
