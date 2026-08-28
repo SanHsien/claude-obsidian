@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """檢查本 fork overlay 文件之間的相對連結。
 
-只驗 FORK.md、NOTICE.md、REVIEW.md、SECURITY.md、CONTRIBUTING.md、
-CODE_OF_CONDUCT.md 與 docs/fork/。
+只驗 overlay 文件：FORK.md、NOTICE.md、REVIEW.md、GEMINI.md、
+SECURITY.md、CONTRIBUTING.md、CODE_OF_CONDUCT.md、docs/fork/、
+以及已加 overlay 的 GitHub 模板／copilot 指示。
 不掃根目錄 README.md：那是上游英文產品契約，由產品 CI 負責。
 不掃 CLAUDE.md：本產品 checkout 依契約不得有該檔。
 
@@ -30,6 +31,7 @@ FORK_DOCUMENTS = [
     ROOT / "FORK.md",
     ROOT / "NOTICE.md",
     ROOT / "REVIEW.md",
+    ROOT / "GEMINI.md",
     ROOT / "SECURITY.md",
     ROOT / "CONTRIBUTING.md",
     ROOT / "CODE_OF_CONDUCT.md",
@@ -41,7 +43,20 @@ def iter_documents() -> list[Path]:
     fork_docs = ROOT / "docs" / "fork"
     if fork_docs.is_dir():
         documents.extend(sorted(fork_docs.glob("*.md")))
-    return [path for path in documents if path.name not in SKIP_NAMES]
+    github = ROOT / ".github"
+    documents.extend(
+        [
+            github / "copilot-instructions.md",
+            github / "pull_request_template.md",
+            github / "ISSUE_TEMPLATE" / "bug_report.md",
+            github / "ISSUE_TEMPLATE" / "feature_request.md",
+        ]
+    )
+    return [
+        path
+        for path in documents
+        if path.is_file() and path.name not in SKIP_NAMES
+    ]
 
 
 def _missing_relative(path: Path, target: str) -> str | None:

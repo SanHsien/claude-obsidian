@@ -32,7 +32,7 @@
 
 **理由**：`claude_obsidian/package_validation.py` 會掃 `README.md`、`docs/*.md`、`skills/**/*.md` 的 `--apply` 範例。產品 `test.yml` 是 hermetic 回歸。everything-claude-code 把落地頁改繁中曾讓產品 CI 失敗。
 
-**限制**：`docs/fork/` 不放進 `docs/*.md` 的產品驗證 glob（該 glob 非遞迴），但 `docs` 仍在 release allowlist 的 `include_roots`，公開 zip 會帶上 fork 文件。這可接受：zip 仍由 allowlist 選檔，`tools/` 不在 `include_roots`。
+**限制**：`docs/fork/` 不放進 `docs/*.md` 的產品驗證 glob（該 glob 非遞迴）。`docs` 仍在 release `include_roots`，但 `docs/fork/**` 已用 `exclude_globs` 擋掉。`tools/` 不在 `include_roots`。
 
 ## 2026-08-28：保留產品 test.yml，不加官方-repo-only guard
 
@@ -79,6 +79,40 @@
 **理由**：`docs` 在 `include_roots`，否則 `release build` 會把本 fork 的繁中維護文件打進公開 zip。這不是產品文件。
 
 **限制**：這是對產品 allowlist 的已記錄 fork 修正。merge 上游時若該檔被重寫，要把這條 exclude 加回去。
+
+## 2026-08-28：CODEOWNERS 改掛本 fork
+
+**決定**：根目錄 `CODEOWNERS` 改為 `* @SanHsien`。產品行為貢獻仍寫在 overlay 文件裡，請去上游。
+
+**理由**：本線不回貢。GitHub 在 fork 上仍向 `@AgriciDaniel` 要求審查，對方不是本 repo collaborator，Dependabot／外部 PR 會卡死。這是 fork 操作檔，不是 marketplace 身份。
+
+**限制**：該檔仍在 release `include_files`。本線不代發產品 zip；若有人用本 checkout 跑 `release build`，產物會帶 SanHsien。plugin.json／marketplace 不改。
+
+## 2026-08-28：issue 模板標明不要開產品到這個 fork
+
+**決定**：`bug_report.md` 與 `feature_request.md` 開頭加上 overlay，指向上游產品 repo 與本線 `FORK.md`。
+
+**理由**：`config.yml` 已關掉空白 issue，但有人仍可能從舊連結開模板。模板本身也要寫清楚。
+
+## 2026-08-28：公開產物排除 overlay workflow
+
+**決定**：`release-allowlist.json` 再排除 fork 的 `fork-maintenance.yml`、`upstream-check.yml`、`dependency-freshness.yml`、`codeql.yml`、`dependabot.yml`。
+
+**理由**：`.github/workflows/*.yml` 與 `.github/*.yml` 會把維護骨架打進公開 zip。產品 `test.yml` 與 `FUNDING.yml` 仍進去。
+
+## 2026-08-28：宿主指示檔加 overlay
+
+**決定**：`GEMINI.md`、`.github/copilot-instructions.md`、`.cursor/rules/claude-obsidian.mdc`、`.windsurf/rules/claude-obsidian.md` 開頭加上 fork overlay。產品正文與「Public canonical」上游 URL 保留。
+
+**理由**：與 `AGENTS.md` 同一類宿主入口。不改寫產品規則。
+
+## 2026-08-28：公開產物排除 fork-only cursor 規則
+
+**決定**：`release-allowlist.json` 排除 `.cursor/rules/no-upstream-pr.mdc`。
+
+**理由**：`.cursor` 在 `include_roots`。那條規則只防本線誤開上游 PR，不該進產品 zip。產品 `.cursor/rules/claude-obsidian.mdc` 仍進去（開頭 overlay 與 `AGENTS.md` 同類）。
+
+## 2026-08-28：不啟用 Dependabot 自動合併
 
 **決定**：Dependabot 只開 PR；CI 與人工讀 diff 通過後才合併。
 

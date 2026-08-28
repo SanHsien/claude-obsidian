@@ -1,5 +1,7 @@
 # claude-obsidian Copilot instructions
 
+> **SanHsien 維護型 fork。** 維護規則見 [`FORK.md`](../FORK.md)。PR 打 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian)。產品行為貢獻請去上游 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian)。不要把本 checkout 當作用戶 vault。
+
 Read `AGENTS.md` before proposing changes. The repository is an Agent Skills
 package, Claude Code adapter, standard-library Python core, and deterministic
 vault template—not the default live user vault.

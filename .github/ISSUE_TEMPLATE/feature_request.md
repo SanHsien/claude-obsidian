@@ -6,6 +6,8 @@ labels: enhancement
 assignees: ''
 ---
 
+> **SanHsien 維護型 fork。** 新 skill、產品行為或 vault 交易請開到上游 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian)。本線只收 overlay／Windows gate 問題。見 [`FORK.md`](../../FORK.md)。
+
 ## Problem
 What user need or workflow gap motivates this request? Be specific about the situation where today's behavior falls short.
 

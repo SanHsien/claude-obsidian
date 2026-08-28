@@ -1,5 +1,7 @@
 # claude-obsidian: Gemini instructions
 
+> **SanHsien 維護型 fork overlay。** 維護規則以 [`FORK.md`](FORK.md) 為準。產品行為遵守 [`AGENTS.md`](AGENTS.md)。不要推 `upstream`、不要對上游開 PR（除非維護者在這次對話明確同意回貢）、不要把本 checkout 當作用戶 vault。
+
 Read `AGENTS.md` as the canonical host-neutral contract. Skills live in
 `skills/<name>/SKILL.md` and the portable core lives in `claude_obsidian/`.
 

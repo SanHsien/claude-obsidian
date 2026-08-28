@@ -19,4 +19,6 @@
   `CODE_OF_CONDUCT.md` 加上 fork overlay；產品正文不改寫。不新增 `CLAUDE.md`（產品契約）。
 - `ISSUE_TEMPLATE/config.yml` 導流：本線 overlay 問題走 SanHsien，產品行為走上游。
 - 根目錄 `.gitignore` 加上 `/wiki/`、`/inbox/`、`/.raw/`，避免把 checkout 當 vault 誤提交。
-- `config/release-allowlist.json` 排除 `docs/fork/**`，公開 zip 不帶 fork 維護文件。
+- `config/release-allowlist.json` 排除 `docs/fork/**` 與 overlay workflow／Dependabot。
+- `CODEOWNERS` 改掛 `@SanHsien`。issue 模板與宿主指示檔加上「產品請走上游」overlay。
+- 公開 zip 再排除 overlay workflow、Dependabot，以及 fork-only `.cursor/rules/no-upstream-pr.mdc`。

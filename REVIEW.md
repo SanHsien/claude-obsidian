@@ -5,7 +5,7 @@
 - Upstream reviewed through: `ad67087cad22ad84cc3288f915588ae42c0c2b44`
 - Upstream watermarks: PR `reviewed_pr_through` = **180**；issue `reviewed_issue_through` = **181**
 - Primary environment: Windows 11、PowerShell、Python 3.14.7（本機）、產品 CI Ubuntu／macOS 3.11–3.14、Windows portable smoke 3.12
-- Status: 維護骨架可用。R-01～R-04、R-09～R-11 已在本線修。R-05～R-08、R-12 接受。不回貢。
+- Status: 維護骨架可用。R-01～R-04、R-09～R-16 已在本線修。R-05～R-08 刻意不修。不回貢。
 
 ## 結論
 
@@ -23,9 +23,9 @@
 git rev-parse HEAD（審查起點 overlay）
 → 8d945a7900231c94c38065f412de41fcea91091e
 
-pwsh -NoProfile -File tools\dev_check.ps1（本輪修復後）
-→ compileall / ruff E9+F / pytest tools 32 passed
-→ 10 份 overlay 文件，0 斷連結
+pwsh -NoProfile -File tools\dev_check.ps1（本輪 overlay 修復後）
+→ compileall / ruff E9+F / pytest tools 35 passed
+→ 15 份 overlay 文件，0 斷連結
 → 產品 portable：package_validation 11 OK、knowledge_contracts 13 OK、
   contracts 25 OK（skipped=1，wiki-lint 在原生 Windows 依設計拒絕寫入）、
   benchmark_tools skipped=5（source-only helpers excluded）、
@@ -34,7 +34,9 @@ pwsh -NoProfile -File tools\dev_check.ps1（本輪修復後）
 → contracts --check-only：valid true
 → WINDOWS DEV CHECK GREEN
 
-tests/test_release.py CanonicalReleasePolicyTests
+tests/test_release.py CanonicalReleasePolicyTests.test_public_policy_never_selects_root_contributor_vault_state
+→ ok
+tests/test_release.py CanonicalPolicyTests.test_repository_allowlist_is_canonical_and_valid
 → ok（完整 hermetic release 套件不在原生 Windows 跑）
 ```
 
@@ -73,6 +75,11 @@ tests/test_release.py CanonicalReleasePolicyTests
 | R-09 | P1 | 一度新增根目錄 `CLAUDE.md`。本 checkout 有 `.claude-plugin/marketplace.json`，`test_knowledge_contracts.py` 禁止兩者並存。 | 刪除 `CLAUDE.md`。測試鎖「此樹不得有 CLAUDE.md」。 |
 | R-10 | P2 | 產品根 `.gitignore` 不忽略 `/wiki/`、`/inbox/`、`/.raw/`。有人把 checkout 當 vault 時，筆記可被 `git add`。 | 加上根前綴規則；不影響 `templates/vault` 與 `examples/sample-vault`。 |
 | R-11 | P3 | `docs` 在 release `include_roots`，`docs/fork/` 會進公開 zip。 | `config/release-allowlist.json` 排除 `docs/fork/**`。這是已記錄的產品 allowlist fork 修正。 |
+| R-12 | P3 | `CODEOWNERS` 仍是 `@AgriciDaniel`。本線不回貢，對方不是 collaborator，Dependabot／外部 PR 會卡死。 | 改為 `* @SanHsien`。該檔仍在 release `include_files`；本線不代發產品 zip。 |
+| R-13 | P3 | `bug_report.md`／`feature_request.md` 沒標明產品請走上游。 | 開頭加上 overlay，指向上游產品 repo 與本線 `FORK.md`。 |
+| R-14 | P3 | overlay workflow／Dependabot 會經 `.github/workflows/*.yml` 與 `.github/*.yml` 進公開 zip。 | `exclude_globs` 排除五個 overlay 檔；產品 `test.yml` 與 `FUNDING.yml` 仍進去。 |
+| R-15 | P3 | `GEMINI.md`、copilot、cursor、windsurf 指示沒有 fork overlay。 | 開頭加上 overlay；產品正文與 Public canonical 上游 URL 保留。 |
+| R-16 | P3 | `.cursor` 在 `include_roots`，fork-only `no-upstream-pr.mdc` 會進公開 zip。 | `exclude_globs` 排除該檔。 |
 
 ## 刻意不修
 
@@ -82,7 +89,6 @@ tests/test_release.py CanonicalReleasePolicyTests
 | R-06 | P3 | `.claude-plugin/plugin.json` 與 `config/public-marketplace.json` 仍指向上游。 | 產品 marketplace。改掛本 fork 會包裝成第二個官方來源。 |
 | R-07 | P3 | `.github/FUNDING.yml` 仍是上游 Skool 連結。 | 不把贊助改掛到 fork 維護者。 |
 | R-08 | P3 | 根目錄 `README.md` 保持英文。 | 產品套件驗證契約。繁中維護在 `FORK.md`。 |
-| R-12 | P3 | `CODEOWNERS` 仍是 `@AgriciDaniel`。 | 該檔在 release `include_files`。改掛 SanHsien 會讓公開產物看起來像第二個官方擁有者。本線無「必須 code owner 核准」的 branch protection。 |
 
 ## 已檢查、不列為 finding
 

@@ -129,6 +129,8 @@ def test_link_checker_skips_product_readme_and_scans_review() -> None:
     assert "CONTRIBUTING.md" in rels
     assert "docs/fork/DECISIONS.md" in rels
     assert "docs/fork/DEVELOPMENT.md" in rels
+    assert "GEMINI.md" in rels
+    assert ".github/ISSUE_TEMPLATE/bug_report.md" in rels
 
 
 def test_missing_relative_rejects_path_escape() -> None:
@@ -216,11 +218,55 @@ def test_gitignore_covers_overlay_reports() -> None:
     assert "/.raw/" in text.splitlines()
 
 
+def test_codeowners_points_at_this_fork() -> None:
+    text = (ROOT / "CODEOWNERS").read_text(encoding="utf-8")
+    assert "* @SanHsien" in text
+    assert "@AgriciDaniel" not in text
+
+
+def test_issue_templates_redirect_product_work_upstream() -> None:
+    bug = (ROOT / ".github" / "ISSUE_TEMPLATE" / "bug_report.md").read_text(
+        encoding="utf-8"
+    )
+    feature = (
+        ROOT / ".github" / "ISSUE_TEMPLATE" / "feature_request.md"
+    ).read_text(encoding="utf-8")
+    for text in (bug, feature):
+        assert "AgriciDaniel/claude-obsidian" in text
+        assert "FORK.md" in text
+        assert "overlay" in text
+
+
 def test_release_allowlist_excludes_fork_docs() -> None:
     allowlist = json.loads(
         (ROOT / "config" / "release-allowlist.json").read_text(encoding="utf-8")
     )
-    assert "docs/fork/**" in allowlist["exclude_globs"]
+    excluded = set(allowlist["exclude_globs"])
+    assert allowlist["exclude_globs"] == sorted(allowlist["exclude_globs"])
+    assert "docs/fork/**" in excluded
+    for name in (
+        ".github/dependabot.yml",
+        ".github/workflows/codeql.yml",
+        ".github/workflows/dependency-freshness.yml",
+        ".github/workflows/fork-maintenance.yml",
+        ".github/workflows/upstream-check.yml",
+        ".cursor/rules/no-upstream-pr.mdc",
+    ):
+        assert name in excluded
+
+
+def test_host_instruction_files_have_fork_overlay() -> None:
+    files = (
+        ROOT / "GEMINI.md",
+        ROOT / ".github" / "copilot-instructions.md",
+        ROOT / ".cursor" / "rules" / "claude-obsidian.mdc",
+        ROOT / ".windsurf" / "rules" / "claude-obsidian.md",
+    )
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        assert "SanHsien" in text, path
+        assert "FORK.md" in text, path
+        assert "AgriciDaniel/claude-obsidian" in text, path
 
 
 def test_review_is_windows_first_record() -> None:

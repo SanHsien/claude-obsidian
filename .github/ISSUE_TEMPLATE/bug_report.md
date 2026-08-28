@@ -6,6 +6,8 @@ labels: bug
 assignees: ''
 ---
 
+> **SanHsien 維護型 fork。** 產品行為（skills、core、hooks、vault 交易）請開到上游 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian)。本線只收 overlay／Windows gate 問題。見 [`FORK.md`](../../FORK.md)。
+
 ## What happened
 A clear description of the unexpected behavior.
 

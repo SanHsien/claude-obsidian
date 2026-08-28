@@ -19,8 +19,10 @@
 | 項目 | 說明 |
 |---|---|
 | `README.md` | 上游英文產品說明 + 頂部 fork overlay。繁中維護在 `FORK.md`／`REVIEW.md` |
-| `AGENTS.md` | 開頭加上本 fork overlay；下文仍是上游產品規則。不新增根目錄 `CLAUDE.md`：本 checkout 有 `.claude-plugin/marketplace.json`，產品契約禁止同時存在 host-only `CLAUDE.md` |
+| `AGENTS.md` / `GEMINI.md` / copilot／cursor／windsurf 指示 | 開頭加上本 fork overlay；下文仍是上游產品規則。不新增根目錄 `CLAUDE.md`：本 checkout 有 `.claude-plugin/marketplace.json`，產品契約禁止同時存在 host-only `CLAUDE.md` |
 | `CONTRIBUTING.md` / `SECURITY.md` / `CODE_OF_CONDUCT.md` | 開頭 overlay：本線 overlay 問題走 SanHsien；產品貢獻與產品漏洞仍指向上游 |
+| `CODEOWNERS` | `* @SanHsien`。產品行為貢獻仍請去上游 |
+| issue 模板 | `bug_report.md`／`feature_request.md` 開頭標明產品請走上游 |
 | `NOTICE.md` / `FORK.md` | 來源、授權與同步說明 |
 | `tools/dev_check.ps1` | Windows 本機一鍵 gate（overlay + 上游 windows-smoke 同等的 portable surface） |
 | `.github/workflows/fork-maintenance.yml` | fork 文件與連結檢查 |
@@ -29,7 +31,7 @@
 | `docs/fork/` | Windows 開發、上游審查、決策、本 fork 變更紀錄 |
 | `REVIEW.md` | 風險快照，不是每個一般 bug 的流水帳 |
 
-產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/` 以上游為準，除非有已記錄的 fork 修正。目前已記錄的產品檔修正只有 `config/release-allowlist.json` 排除 `docs/fork/**`，以及根目錄 `.gitignore` 的 vault 路徑。
+產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/` 以上游為準，除非有已記錄的 fork 修正。目前已記錄的產品檔修正：`config/release-allowlist.json`（排除 `docs/fork/**`、overlay workflow／Dependabot、`.cursor/rules/no-upstream-pr.mdc`）、根目錄 `.gitignore` 的 vault 路徑、`CODEOWNERS`、issue／宿主指示檔 overlay。
 
 ## 分支與 remote
 

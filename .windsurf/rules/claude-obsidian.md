@@ -1,5 +1,7 @@
 # claude-obsidian: Windsurf rules
 
+> **SanHsien 維護型 fork overlay。** 維護規則以 [`FORK.md`](../../FORK.md) 為準。產品行為遵守 [`AGENTS.md`](../../AGENTS.md)。不要把本 checkout 當作用戶 vault。
+
 Read `AGENTS.md` as the canonical host-neutral contract. Preview and then
 install Cascade skill links with
 `bash bin/setup-multi-agent.sh --host windsurf --workspace "$PWD"` followed by

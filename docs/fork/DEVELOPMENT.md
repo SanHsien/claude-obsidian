@@ -68,6 +68,7 @@ make test
 - 不要新增根目錄 `CLAUDE.md`（本 checkout 有 marketplace.json，產品契約禁止）。
 - 不要翻譯 `skills/`。
 - 不要改 `.claude-plugin/plugin.json` 的 homepage／repository，不要把 `FUNDING.yml` 改掛到維護者。
+- 不要把 `CODEOWNERS` 改回 `@AgriciDaniel`（本線不回貢；對方不是 collaborator）。
 - 不要把這個 checkout 當作用戶 vault，不要提交 `wiki/`、`.raw/`、`.vault-meta/`。
 - 不要提交 `.env`、API key 或筆記內容。
 - 原生 Windows 上不要對 vault 跑 `--apply`；寫入會以 `UNSUPPORTED_PLATFORM` 拒絕。
