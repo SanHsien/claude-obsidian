@@ -1,5 +1,7 @@
 # Security policy
 
+> **SanHsien 維護型 fork。** 產品漏洞（skills、`claude_obsidian/`、vault 交易、hooks）仍請用下文的上游 private reporting：[`AgriciDaniel/claude-obsidian` advisories](https://github.com/AgriciDaniel/claude-obsidian/security/advisories/new)。本 fork overlay（`tools/`、`docs/fork/`、workflow）開 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian) 的 Security tab。維護規則見 [`FORK.md`](FORK.md)。本線不代發上游產品 release。
+
 ## Report a vulnerability
 
 Use GitHub [private vulnerability reporting](https://github.com/AgriciDaniel/claude-obsidian/security/advisories/new)

@@ -1,5 +1,7 @@
 # Pull request
 
+> **SanHsien 維護型 fork。** 本線 PR 必須打到 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian)。對上游 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian) 開 PR 需要維護者在當次對話明確同意回貢。產品行為變更請優先考慮上游。見 [`FORK.md`](../FORK.md)。
+
 ## Summary
 One-paragraph description of what this PR changes and why.
 

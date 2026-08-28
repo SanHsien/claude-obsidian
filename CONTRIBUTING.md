@@ -1,5 +1,13 @@
 # Contributing to claude-obsidian
 
+> **SanHsien 維護型 fork。** 本線的 overlay／Windows gate 問題打到 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian)。產品行為（skills、core、hooks、vault 交易）的貢獻請去上游 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian)。維護規則見 [`FORK.md`](FORK.md)。
+>
+> 本線 clone：
+>
+> ```powershell
+> git clone https://github.com/SanHsien/claude-obsidian.git
+> ```
+
 Contributions are welcome in the public canonical repository:
 https://github.com/AgriciDaniel/claude-obsidian.
 

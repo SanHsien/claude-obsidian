@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 本 fork 貢獻指南
+    url: https://github.com/SanHsien/claude-obsidian/blob/main/CONTRIBUTING.md
+    about: Windows-first 維護線。overlay／gate 問題可以開在這裡；產品行為請走上游
+  - name: 上游產品貢獻
+    url: https://github.com/AgriciDaniel/claude-obsidian/blob/main/CONTRIBUTING.md
+    about: skills、core、hooks、vault 交易的產品變更請開到原作者倉庫
+  - name: 上游 Windows / WSL 說明
+    url: https://github.com/AgriciDaniel/claude-obsidian/blob/main/docs/windows-wsl.md
+    about: 原生 Windows 唯讀與 WSL 寫入邊界

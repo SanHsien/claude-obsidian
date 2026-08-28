@@ -1,5 +1,7 @@
 # Code of Conduct
 
+> **SanHsien 維護型 fork。** 產品社群行為準則仍以下文上游契約為準。本 fork overlay 的行為問題可開 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian) 的私人管道。維護規則見 [`FORK.md`](FORK.md)。
+
 This project adopts the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/) as its code of conduct.
 
 ## In short

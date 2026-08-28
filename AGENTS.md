@@ -1,5 +1,11 @@
 # claude-obsidian: Agent Instructions
 
+> **SanHsien 維護型 fork overlay。** `origin` 是 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian)，`upstream` 是 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian)。
+> 本 fork 的維護規則以 [`FORK.md`](FORK.md) 為準；與下文衝突時以 FORK.md 優先。
+> 不要推 `upstream`、不要對上游開 PR（除非維護者在這次對話明確同意回貢）、不要把本 checkout 當作用戶 vault、不要當官方產品站。
+> 產品行為（`skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/`）仍遵守下文上游規則。
+> 開發與驗收見 [`docs/fork/DEVELOPMENT.md`](docs/fork/DEVELOPMENT.md)。風險快照見 [`REVIEW.md`](REVIEW.md)。
+
 claude-obsidian is a local-first Agent Skills package for building source-cited,
 compounding Obsidian knowledge bases. It also ships a Claude Code plugin adapter.
 The portable workflow is implemented in `skills/` and the standard-library

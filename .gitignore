@@ -151,3 +151,9 @@ _attachments/
 # v1.8 methodology mode (host-specific by default; `git add -f` to commit if desired)
 .vault-meta/mode.json
 .vault-meta/mode.*.tmp
+
+# Fork overlay reports and local caches
+upstream-review-report.md
+dependency-freshness-report.md
+.pytest_cache/
+.ruff_cache/

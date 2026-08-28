@@ -1,0 +1,81 @@
+name: Fork maintenance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - FORK.md
+      - NOTICE.md
+      - REVIEW.md
+      - AGENTS.md
+      - README.md
+      - SECURITY.md
+      - CONTRIBUTING.md
+      - CODE_OF_CONDUCT.md
+      - docs/fork/**
+      - tools/**
+      - requirements-dev.txt
+      - pyproject.toml
+      - .github/workflows/fork-maintenance.yml
+      - .github/workflows/upstream-check.yml
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fork-maintenance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: fork gate (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Disable line-ending translation before checkout
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf false
+
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+
+      - name: Install fork-gate dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Canonical fork gate
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: pwsh -NoProfile -File tools/dev_check.ps1
+
+      - name: Canonical fork gate
+        if: runner.os != 'Windows'
+        run: |
+          python -m compileall -q tools
+          python -m ruff check --select E9,F --target-version py311 tools
+          python -m pytest tools -q
+          python tools/check_links.py
+          python tests/test_package_validation.py
+          python tests/test_knowledge_contracts.py
+          python tests/test_contracts.py
+          python tests/test_benchmark_tools.py
+          python tests/test_windows_compat.py
+          python scripts/claude-obsidian.py package validate
+          python scripts/claude-obsidian.py contracts --check-only

@@ -1,0 +1,9 @@
+{
+  "repo": "https://github.com/AgriciDaniel/claude-obsidian.git",
+  "branch": "main",
+  "reviewed_through": "ad67087cad22ad84cc3288f915588ae42c0c2b44",
+  "reviewed_date": "2026-08-28",
+  "notes": "Fork overlay established at upstream fix: harden recovery and response boundaries. No product commits adopted beyond the fork point. Subsequent upstream commits, PRs, and issues require review.",
+  "reviewed_pr_through": 180,
+  "reviewed_issue_through": 181
+}

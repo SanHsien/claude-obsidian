@@ -1,3 +1,5 @@
+> **SanHsien 維護型 fork。** 產品說明以下文上游英文為準。繁中維護規則見 [`FORK.md`](FORK.md)；本輪審查見 [`REVIEW.md`](REVIEW.md)。`origin` 是 [`SanHsien/claude-obsidian`](https://github.com/SanHsien/claude-obsidian)，`upstream` 是 [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian)。原生 Windows 僅支援唯讀與 dry-run；vault 寫入需 WSL，見 [`docs/windows-wsl.md`](docs/windows-wsl.md)。
+
 <p align="center">
   <img src="assets/cover.png" alt="claude-obsidian cover featuring an astronaut, the Obsidian crystal, and a connected knowledge graph" width="100%">
 </p>
