@@ -7,6 +7,14 @@ implementation record for older releases.
 
 ## [Unreleased]
 
+### Changed
+
+- Development dependency floor for `pytest` moved from 8.3.0 to 9.1. The declared
+  floor had aged two majors behind PyPI. Blast radius is narrow: nothing under
+  `tests/` imports pytest -- those files run as standalone scripts via
+  `make test-python` -- so pytest only governs the two suites under `tools/`,
+  which pass on 9.1.1.
+
 ### Fixed
 
 - `stop_status` now reads transaction journals up to the package's existing
