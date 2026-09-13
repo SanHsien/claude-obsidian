@@ -1,0 +1,17 @@
+# Tool configuration only. This repository ships a stdlib Python Agent Skills
+# package, not a published library, so there is deliberately no [project] or
+# [build-system] table. The file exists so a bare `ruff check` or `pytest`
+# locally behaves the way the fork gate does.
+#
+# Keep these values in sync with .github/workflows/fork-maintenance.yml
+# and tools/dev_check.ps1.
+
+[tool.ruff]
+target-version = "py311"
+src = ["tools"]
+
+[tool.ruff.lint]
+select = ["E9", "F"]
+
+[tool.pytest.ini_options]
+testpaths = ["tools"]

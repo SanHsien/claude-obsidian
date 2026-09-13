@@ -1,0 +1,9 @@
+{
+  "repo": "https://github.com/AgriciDaniel/claude-obsidian.git",
+  "branch": "main",
+  "reviewed_through": "ad67087cad22ad84cc3288f915588ae42c0c2b44",
+  "reviewed_date": "2026-08-30",
+  "notes": "Fork overlay established at upstream fix: harden recovery and response boundaries. No product commits adopted beyond the fork point. Subsequent upstream commits, PRs, and issues require review. 2026-08-30：PR 水位 180 → 182。水位以上只有 #182 一筆（#181 不是 PR，issue 與 PR 共用編號空間），已讀 diff 並採用（設定釘死，理由與『上游前提在本 fork 不成立』的實查見 docs/fork/DECISIONS.md 同日條目）。",
+  "reviewed_pr_through": 182,
+  "reviewed_issue_through": 181
+}
