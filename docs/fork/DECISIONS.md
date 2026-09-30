@@ -182,3 +182,35 @@ vault 相對路徑解析、沒有模糊比對，所以 Obsidian 預設的 shorte
 
 **觸發條件**：若哪天把 `resolve()` 的 `by_basename` 回退拿掉、改成只認精確路徑，上游那句「靜靜
 指錯」就會在這裡成立，那時要重讀這條。
+
+
+## 2026-09-30：上游審查（28 commit / 3 PR / 7 issue，至 v2.2.0）
+
+本 fork 與上游歷史無共同祖先，產品檔與 `ad67087` 逐位元組相同，所以採用方式是「對上游 commit
+的 diff 做 `git apply`」（排除 CHANGELOG／.gitignore），不是 merge／cherry-pick。
+
+**採用（4 組，fork gate 全綠）**
+
+| 上游 commit | 內容 | 理由 |
+| --- | --- | --- |
+| `700957d`, `a432fc5`（squash #178/#180） | tests 對 stdout 設 UTF-8；`contextual-prefix.py` 解析 CRLF frontmatter | Windows-first，CRLF 檔案在本 fork 是常態 |
+| `6621c19` | `capture.py` 拒絕數字／十六進位 loopback 主機寫法 | 安全修正，只動 capture.py＋測試 |
+| `ca5e902` | `--force-stale-lock` 可回收死亡 owner、容忍 mtime 抖動 | 鎖修正，Windows mtime 精度相關 |
+| `8b8f0fd`（僅 `transaction.py`＋測試） | 確認讀取需逐位元組相同 | 鎖修正；`.mcp.json` 的 .gitignore 行未採（貢獻者環境用，與產品無關） |
+
+**adoption pending（不在本輪採）**
+
+- `88c3a2c`（bin/→scripts/ 搬遷，30+ 檔）、`b9f5cfe`（skill 錨點，15 檔）、`9231d4a`（lint `--exclude`）、
+  `98fdbf6`（gitignore 候選過濾）、`b250c19`/`5837ba4`（page-type 詞彙）：大型／跨檔重構，牽動 overlay 與
+  `RELEASE_MANIFEST`；需逐檔 diff 與本地驗證。觸發條件：下次要碰 lint 或 setup 腳本時一併移植。
+- issue #183/#184（lint 走進 `.claude/`、無排除機制）：與 `9231d4a` 同一組，待該組移植。
+
+**略過**
+
+- `72d5ea0`、`c6ac45f`、`508d062`（ZCode host adapter）：本 fork 未支援該主機，not-applicable。
+- `de69799`（python3 需求文件）、`891214f`（credit）、`e18e023`/`882947c`（wiki-ingest 文件連結）、
+  `a154774`/`ccd0c61`（#182，已於 2026-08-30 採用）、`de39db6`/`9c640c0`/`32ac5a0`（v2.2.0 版本／manifest，
+  fork 自有 manifest）、`31cc748`/`012fd2d`/`3be2974`/`01a912d`/`cd43681`（squash 重複）：文件、版本或已涵蓋。
+- PR #185（cue-omni-reader 推廣文件）：upstream-only 第三方服務宣傳。#186／#187：上述 commit 的合併容器。
+- issue #188–#192：上游設計討論／功能請求，無本 fork 獨有缺陷；#190、#191 為 lint 解析器行為，隨 lint 組一起
+  重看；#192（16 MB 讀取上限）為 by-design 提問，follow-upstream。

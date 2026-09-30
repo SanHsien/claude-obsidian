@@ -51,3 +51,8 @@ Open issue 值得記但不提前移植：
 | Issue | 為什麼值得記 | 觸發條件 |
 | --- | --- | --- |
 | [#151](https://github.com/AgriciDaniel/claude-obsidian/issues/151) 降級原生 Windows 寫入模式 | 本線 Windows-first，原生寫入目前 fail-closed | 上游合併該設計，或本線實際被 WSL 卡住需要降級寫入 |
+
+## 2026-09-30：審查至 v2.2.0
+
+水位推進到 `32ac5a0`（v2.2.0，`reviewed_through`）、PR #187、issue #192。採用與待移植項目見
+`docs/fork/DECISIONS.md` 同日條目。
