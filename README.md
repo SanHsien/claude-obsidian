@@ -381,6 +381,10 @@ No command pushes, tags, publishes, opens issues, or creates releases
 automatically. See [CONTRIBUTING.md](CONTRIBUTING.md),
 [SECURITY.md](SECURITY.md), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
+## Multi-agent pipeline
+
+This repo is part of the [agent-relay](https://github.com/SanHsien/agent-relay) multi-agent dispatch and verification pipeline (role: Obsidian handoff-sheet sync). Integration with agent-relay is planned (Phase 2). The protocol spec and the index of all related repos live in agent-relay.
+
 ## Lineage, license, and attribution
 
 The design follows
