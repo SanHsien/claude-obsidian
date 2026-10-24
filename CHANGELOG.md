@@ -9,6 +9,8 @@ implementation record for older releases.
 
 ### Changed
 
+- Removed `GEMINI.md`; its content is merged into `AGENTS.md`, the single
+  host-neutral instruction file.
 - Development dependency floor for `pytest` moved from 8.3.0 to 9.1. The declared
   floor had aged two majors behind PyPI. Blast radius is narrow: nothing under
   `tests/` imports pytest -- those files run as standalone scripts via

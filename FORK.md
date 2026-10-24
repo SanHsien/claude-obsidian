@@ -19,7 +19,7 @@
 | 項目 | 說明 |
 |---|---|
 | `README.md` | 上游英文產品說明 + 頂部 fork overlay。繁中維護在 `FORK.md`／`REVIEW.md` |
-| `AGENTS.md` / `GEMINI.md` / copilot／cursor／windsurf 指示 | 開頭加上本 fork overlay；下文仍是上游產品規則。不新增根目錄 `CLAUDE.md`：本 checkout 有 `.claude-plugin/marketplace.json`，產品契約禁止同時存在 host-only `CLAUDE.md` |
+| `AGENTS.md` / copilot／cursor／windsurf 指示 | 開頭加上本 fork overlay；下文仍是上游產品規則。不新增根目錄 `CLAUDE.md`：本 checkout 有 `.claude-plugin/marketplace.json`，產品契約禁止同時存在 host-only `CLAUDE.md` |
 | `CONTRIBUTING.md` / `SECURITY.md` / `CODE_OF_CONDUCT.md` | 開頭 overlay：本線 overlay 問題走 SanHsien；產品貢獻與產品漏洞仍指向上游 |
 | `CODEOWNERS` | `* @SanHsien`。產品行為貢獻仍請去上游 |
 | issue 模板 | `bug_report.md`／`feature_request.md` 開頭標明產品請走上游 |

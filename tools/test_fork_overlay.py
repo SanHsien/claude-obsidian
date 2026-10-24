@@ -136,7 +136,6 @@ def test_link_checker_skips_product_readme_and_scans_review() -> None:
     assert "CONTRIBUTING.md" in rels
     assert "docs/fork/DECISIONS.md" in rels
     assert "docs/fork/DEVELOPMENT.md" in rels
-    assert "GEMINI.md" in rels
     assert ".github/ISSUE_TEMPLATE/bug_report.md" in rels
 
 
@@ -264,7 +263,6 @@ def test_release_allowlist_excludes_fork_docs() -> None:
 
 def test_host_instruction_files_have_fork_overlay() -> None:
     files = (
-        ROOT / "GEMINI.md",
         ROOT / ".github" / "copilot-instructions.md",
         ROOT / ".cursor" / "rules" / "claude-obsidian.mdc",
         ROOT / ".windsurf" / "rules" / "claude-obsidian.md",

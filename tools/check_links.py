@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """檢查本 fork overlay 文件之間的相對連結。
 
-只驗 overlay 文件：FORK.md、NOTICE.md、REVIEW.md、GEMINI.md、
+只驗 overlay 文件：FORK.md、NOTICE.md、REVIEW.md、
 SECURITY.md、CONTRIBUTING.md、CODE_OF_CONDUCT.md、docs/fork/、
 以及已加 overlay 的 GitHub 模板／copilot 指示。
 不掃根目錄 README.md：那是上游英文產品契約，由產品 CI 負責。
@@ -31,7 +31,6 @@ FORK_DOCUMENTS = [
     ROOT / "FORK.md",
     ROOT / "NOTICE.md",
     ROOT / "REVIEW.md",
-    ROOT / "GEMINI.md",
     ROOT / "SECURITY.md",
     ROOT / "CONTRIBUTING.md",
     ROOT / "CODE_OF_CONDUCT.md",
