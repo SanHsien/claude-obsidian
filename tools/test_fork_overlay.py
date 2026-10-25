@@ -309,3 +309,34 @@ def test_overlay_python_is_not_in_release_roots() -> None:
     assert "FORK.md" not in allowlist["include_files"]
     assert "NOTICE.md" not in allowlist["include_files"]
     assert "REVIEW.md" not in allowlist["include_files"]
+
+
+def test_link_title_is_not_part_of_the_target() -> None:
+    """`[x](NOTICE.md "title")` is a valid link; the title is not a filename."""
+    assert check_links._missing_relative(ROOT / "FORK.md", 'NOTICE.md "the notice"') is None
+    assert check_links._missing_relative(ROOT / "FORK.md", "NOTICE.md 'the notice'") is None
+    assert check_links._missing_relative(ROOT / "FORK.md", "<NOTICE.md> \"t\"") is None
+
+
+def test_repo_root_relative_link_resolves_against_the_repo_root() -> None:
+    """GitHub renders `/docs/fork/DECISIONS.md` from the repo root; joining it
+    onto the document directory sends it to the drive root instead."""
+    assert check_links._missing_relative(
+        ROOT / "docs" / "fork" / "UPSTREAM.md", "/docs/fork/DECISIONS.md"
+    ) is None
+    problem = check_links._missing_relative(ROOT / "FORK.md", "/no-such-file.md")
+    assert problem is not None
+    assert "找不到" in problem
+
+
+def test_an_image_link_is_reported_once(tmp_path: Path, monkeypatch) -> None:
+    """IMAGE_PATTERN also matches inside LINK_PATTERN, so `![a](gone.png)` was
+    reported twice and inflated the problem count."""
+    monkeypatch.setattr(check_links, "ROOT", tmp_path)
+    doc = tmp_path / "doc.md"
+    doc.write_text("![a](gone.png) [b](gone.md)\n", encoding="utf-8")
+
+    problems = check_links.check_document(doc)
+
+    assert len(problems) == 2
+    assert len(set(problems)) == 2

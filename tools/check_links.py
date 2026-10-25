@@ -59,13 +59,21 @@ def iter_documents() -> list[Path]:
 
 
 def _missing_relative(path: Path, target: str) -> str | None:
-    target = target.strip().strip("<>")
+    target = target.strip()
+    if target.startswith("<"):
+        # `<a path with spaces.md> "optional title"`
+        target = target[1:].split(">", 1)[0].strip()
+    elif target:
+        # `path.md "optional title"`: the title is not part of the destination.
+        target = target.split(None, 1)[0]
     if not target or target.startswith(SKIP_PREFIXES):
         return None
     file_part = unquote(target.split("#", 1)[0])
     if not file_part:
         return None
-    resolved = (path.parent / file_part).resolve()
+    # GitHub resolves a leading "/" from the repo root, not from the file.
+    base = ROOT if file_part.startswith("/") else path.parent
+    resolved = (base / file_part.lstrip("/")).resolve()
     if not resolved.is_relative_to(ROOT):
         return f"{target} → 逃出 repo 根目錄"
     if resolved.exists():
@@ -80,11 +88,16 @@ def _missing_relative(path: Path, target: str) -> str | None:
 def check_document(path: Path) -> list[str]:
     problems: list[str] = []
     text = path.read_text(encoding="utf-8")
-    for pattern in (LINK_PATTERN, IMAGE_PATTERN, HTML_SRC_PATTERN):
-        for match in pattern.finditer(text):
-            missing = _missing_relative(path, match.group(1))
-            if missing:
-                problems.append(missing)
+    # `![a](b)` also contains the link `[a](b)`; report each target once.
+    targets = dict.fromkeys(
+        match.group(1)
+        for pattern in (LINK_PATTERN, IMAGE_PATTERN, HTML_SRC_PATTERN)
+        for match in pattern.finditer(text)
+    )
+    for target in targets:
+        missing = _missing_relative(path, target)
+        if missing:
+            problems.append(missing)
     return problems
 
 
