@@ -8,14 +8,14 @@
 Claude Code / Cursor / Codex / Gemini / 其他 Agent Skills 宿主
         │
         ▼
- skills/  agents/  hooks/  claude_obsidian/  scripts/  bin/
+ skills/  agents/  hooks/  claude_obsidian/  scripts/
         │
         ├─ python scripts/claude-obsidian.py   可攜核心（標準庫）
         ├─ make test                             完整 hermetic 套件（POSIX）
         └─ 上游 .github/workflows/test.yml       Linux / macOS 全測 + Windows smoke
 ```
 
-根目錄 `FORK.md`、`tools/`、`docs/fork/` 是本 fork 的開發與治理骨架。`skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/` 以上游為準。
+根目錄 `FORK.md`、`tools/`、`docs/fork/` 是本 fork 的開發與治理骨架。`skills/`、`claude_obsidian/`、`hooks/`、`scripts/` 以上游為準。
 
 產品 checkout **不是**用戶 vault。vault 必須是含 `.claude-obsidian.json` 的獨立目錄。
 

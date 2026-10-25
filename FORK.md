@@ -31,7 +31,7 @@
 | `docs/fork/` | Windows 開發、上游審查、決策、本 fork 變更紀錄 |
 | `REVIEW.md` | 風險快照，不是每個一般 bug 的流水帳 |
 
-產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/`、`bin/` 以上游為準，除非有已記錄的 fork 修正。目前已記錄的產品檔修正：`config/release-allowlist.json`（排除 `docs/fork/**`、overlay workflow／Dependabot、`.cursor/rules/no-upstream-pr.mdc`）、根目錄 `.gitignore` 的 vault 路徑、`CODEOWNERS`、issue／宿主指示檔 overlay。
+產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/` 以上游為準，除非有已記錄的 fork 修正。目前已記錄的產品檔修正：`config/release-allowlist.json`（排除 `docs/fork/**`、overlay workflow／Dependabot、`.cursor/rules/no-upstream-pr.mdc`）、根目錄 `.gitignore` 的 vault 路徑、`CODEOWNERS`、issue／宿主指示檔 overlay。
 
 ## 分支與 remote
 
