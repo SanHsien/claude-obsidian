@@ -81,7 +81,7 @@ def load_deferrals(path: Path = DEFERRALS_PATH) -> dict[str, tuple[str, str]]:
     without it is ignored for exactly that reason.
     """
     try:
-        entries = json.loads(path.read_text(encoding="utf-8")).get("deferrals", {})
+        entries = json.loads(path.read_text(encoding="utf-8-sig")).get("deferrals", {})
     except (OSError, ValueError):
         return {}
     deferrals: dict[str, tuple[str, str]] = {}
@@ -134,7 +134,7 @@ def load_direct_dependencies(root: Path = REPO_ROOT) -> list[dict[str, str]]:
         path = root / name
         if not path.is_file():
             raise DependencyCheckError(f"missing requirements file: {name}")
-        for package in parse_requirements(path.read_text(encoding="utf-8"), name):
+        for package in parse_requirements(path.read_text(encoding="utf-8-sig"), name):
             key = package["name"].lower().replace("_", "-")
             if key in seen:
                 continue

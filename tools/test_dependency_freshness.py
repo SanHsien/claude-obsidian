@@ -114,3 +114,31 @@ def test_report_names_both_exits_so_the_next_person_does_not_invent_a_third() ->
     assert "freshness-hold:" in report
     assert "dependency-deferrals.json" in report
     assert "mute button" in report
+
+
+def test_utf8_bom_does_not_hide_the_first_requirement(tmp_path: Path) -> None:
+    """Windows PowerShell 5 writes UTF-8 files with a BOM.
+
+    Read as plain utf-8 the BOM sticks to the first line, the name regex no
+    longer matches, and that package silently drops out of the report.
+    """
+    (tmp_path / "requirements-dev.txt").write_bytes(
+        b"\xef\xbb\xbfpytest>=9.1\nruff>=0.16\n"
+    )
+
+    names = [package["name"] for package in checker.load_direct_dependencies(tmp_path)]
+
+    assert names == ["pytest", "ruff"]
+
+
+def test_utf8_bom_does_not_discard_the_deferrals_file(tmp_path: Path) -> None:
+    """A BOM made json.loads fail, and load_deferrals swallowed that as "none"."""
+    path = tmp_path / "dependency-deferrals.json"
+    path.write_bytes(
+        b"\xef\xbb\xbf"
+        + json.dumps(
+            {"deferrals": {"ruff": {"deferredLatest": "0.17.1", "reason": "later"}}}
+        ).encode("utf-8")
+    )
+
+    assert checker.load_deferrals(path) == {"ruff": ("0.17.1", "later")}
