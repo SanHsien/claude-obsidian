@@ -215,7 +215,7 @@ vault 相對路徑解析、沒有模糊比對，所以 Obsidian 預設的 shorte
 - issue #188–#192：上游設計討論／功能請求，無本 fork 獨有缺陷；#190、#191 為 lint 解析器行為，隨 lint 組一起
   重看；#192（16 MB 讀取上限）為 by-design 提問，follow-upstream。
 
-## 2026-10-25：上游審查（69 commit / PR #188–#210 / issue #193–#200，至 v3.0.1）
+## 2026-10-25：上游審查（69 commit / PR #188–#210 / issue #193–#200，另含已合併的 #201–#209，至 v3.0.1）
 
 fork 產品檔與 `ad67087`＋上次採用的 4 組修正逐位元組相同，且與上游無共同祖先，所以改以
 `git merge-recursive ad67087 -- HEAD upstream/main` 做明確基底的三方合併，取代逐 commit `git apply`。
@@ -230,7 +230,7 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 - issue #196（Windows 上 SessionStart／Stop hook 逾時，無操作路徑仍要匯入整個 CLI）：上游 3.0 的 hook 快速路徑已不
   匯入完整 CLI，本機實測 `hook session-start` 約 0.1–0.2 秒、`hook stop` 約 0.14–0.18 秒。
 - fork 自有保留：README 頂部 overlay 與 agent-relay 段、`.gitignore` 的 vault 路徑、`CODEOWNERS`、fork workflow、
-  較新的 action 釘版（`codeql.yml` 用 v7.0.1／v4.37.4，上游 v7.0.0／v4.38.2 不採，理由見下）、
+  `codeql.yml` 保留本線版（python 單語言、`security-extended`；action 釘版 checkout v7.0.1／codeql-action v4.37.4，其中 codeql-action 比上游 v4.38.2 舊，交給本線 Dependabot 週更）、
   `newLinkFormat: absolute` 與其測試（#182）。`GEMINI.md` 維持刪除（維護者 2026-10-24 指示，單一 `AGENTS.md`）。
 - 調整：`tests/test_benchmark_tools.py` 上游已刪除，Windows gate 清單（`tools/dev_check.ps1`、
   `fork-maintenance.yml`）改為對齊上游 `windows-smoke` 的 `tests/test_ollama.py`；
@@ -243,7 +243,7 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 | --- | --- | --- |
 | PR #210（lint 解析 NFC／NFD） | 上游**未合併**。針對 macOS／iCloud 的 NFD 檔名；本 fork 以 Windows 為主，NTFS 檔名不會被正規化成 NFD，缺陷不是本線的 | 上游合併，或本線 vault 出現 NFD 檔名 |
 | PR #202（內容管線工具與 deep-review skill） | 上游**未合併**。新增 20 多支影片／投影片腳本與 capabilities 變更，是功能擴充不是修正 | 上游合併且本線有使用需求 |
-| PR #205（github-actions 升級） | 本 fork 的 workflow 釘版已較新（checkout v7.0.1、codeql-action v4.37.4 由本線 Dependabot 與新鮮度檢查維護） | 無，Dependabot 本線自動處理 |
+| PR #205（github-actions 升級） | 只是 action 版本升級（改 `codeql.yml`、`test.yml`），不是缺陷修正；`test.yml` 目前沿用上游 v7.0.0 釘版，本線 Dependabot 會自行開同類 PR | 本線 Dependabot PR 出現時照 CI 全綠＋審查合併 |
 | `dependabot.yml`、`codeql.yml` 上游版 | 本線 Dependabot 含 pip 生態與台北時區排程；`codeql.yml` 只掃 python 且以 SHA 釘版，上游多一個 `actions` 語言矩陣 | 若要掃 workflow 本身再比較 |
 | issue #197（PrompTown 授權請求） | 上游推廣／授權對話，與本 fork 無關 | 無 |
 | issue #200（flat vault 掃 0 頁）、#193、PR #194/#195/#198/#199（已關閉） | #200／#193 已於 3.0 修正；#194/#195/#198/#199 關閉未合併：#195 是 Haiku 5.5 模型名，3.0 已含 `claude-haiku-5-5`（見 `tests/test_contextual_prefix.py`），其餘為多語系與 canvas 索引，不對應本 fork 獨有缺陷 | 無 |

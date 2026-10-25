@@ -302,6 +302,7 @@ class PackageValidationTests(unittest.TestCase):
             with self.subTest(relative):
                 config = json.loads((ROOT / relative).read_text(encoding="utf-8"))
                 self.assertEqual(config.get("newLinkFormat"), "absolute")
+
     def test_workflow_apply_examples_require_reviewed_hash(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
