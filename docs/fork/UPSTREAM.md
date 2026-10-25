@@ -56,3 +56,10 @@ Open issue 值得記但不提前移植：
 
 水位推進到 `32ac5a0`（v2.2.0，`reviewed_through`）、PR #187、issue #192。採用與待移植項目見
 `docs/fork/DECISIONS.md` 同日條目。
+
+## 2026-10-25：審查至 v3.0.1
+
+水位推進到 `2e54556`（v3.0.1 後的 star-history 合併，`reviewed_through`）、PR #210、issue #210。
+以 `git merge-recursive ad67087 -- HEAD upstream/main` 整批併入上游產品樹（含先前 pending 的
+bin/→scripts/ 搬遷、lint `--exclude` 等）；未採項目（PR #210、#202、#205 等）與觸發條件見
+`docs/fork/DECISIONS.md` 同日條目。
