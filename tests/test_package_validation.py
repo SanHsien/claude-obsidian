@@ -292,7 +292,7 @@ class PackageValidationTests(unittest.TestCase):
         at the source instead of detecting it afterwards.
 
         Checked here rather than only in `test_setup_vault.py`: that file drives
-        `bin/setup-vault.sh` through bash and does not run on Windows, so a
+        `scripts/setup-vault.sh` through bash and does not run on Windows, so a
         regression in the shipped templates would go unnoticed by the fork gate.
         """
         for relative in (

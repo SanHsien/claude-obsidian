@@ -244,7 +244,7 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 | PR #210（lint 解析 NFC／NFD） | 上游**未合併**。針對 macOS／iCloud 的 NFD 檔名；本 fork 以 Windows 為主，NTFS 檔名不會被正規化成 NFD，缺陷不是本線的 | 上游合併，或本線 vault 出現 NFD 檔名 |
 | PR #202（內容管線工具與 deep-review skill） | 上游**未合併**。新增 20 多支影片／投影片腳本與 capabilities 變更，是功能擴充不是修正 | 上游合併且本線有使用需求 |
 | PR #205（github-actions 升級） | 只是 action 版本升級（改 `codeql.yml`、`test.yml`），不是缺陷修正；`test.yml` 目前沿用上游 v7.0.0 釘版，本線 Dependabot 會自行開同類 PR | 本線 Dependabot PR 出現時照 CI 全綠＋審查合併 |
-| `dependabot.yml`、`codeql.yml` 上游版 | 本線 Dependabot 含 pip 生態與台北時區排程；`codeql.yml` 只掃 python 且以 SHA 釘版，上游多一個 `actions` 語言矩陣 | 若要掃 workflow 本身再比較 |
+| `dependabot.yml`、`codeql.yml` 上游版 | 本線 Dependabot 含 pip 生態與台北時區排程；`codeql.yml` 只掃 python 且以 SHA 釘版，上游多一個 `actions` 語言矩陣；上游 `dependabot.yml` 的 `cooldown: 14 天` 也刻意不採（本線 Dependabot 沒有冷卻期，由新鮮度檢查與審查把關）| 若要掃 workflow 本身再比較 |
 | issue #197（PrompTown 授權請求） | 上游推廣／授權對話，與本 fork 無關 | 無 |
 | issue #200（flat vault 掃 0 頁）、#193、PR #194/#195/#198/#199（已關閉） | #200／#193 已於 3.0 修正；#194/#195/#198/#199 關閉未合併：#195 是 Haiku 5.5 模型名，3.0 已含 `claude-haiku-5-5`（見 `tests/test_contextual_prefix.py`），其餘為多語系與 canvas 索引，不對應本 fork 獨有缺陷 | 無 |
 
