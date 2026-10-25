@@ -75,7 +75,7 @@ jobs:
           python tests/test_package_validation.py
           python tests/test_knowledge_contracts.py
           python tests/test_contracts.py
-          python tests/test_benchmark_tools.py
+          python tests/test_ollama.py
           python tests/test_windows_compat.py
           python scripts/claude-obsidian.py package validate
           python scripts/claude-obsidian.py contracts --check-only

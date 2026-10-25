@@ -41,7 +41,7 @@ pwsh -NoProfile -File tools\dev_check.ps1
 4. `python tools/check_links.py`
 5. 上游 windows-smoke 同等的 portable surface：
    `tests/test_package_validation.py`、`tests/test_knowledge_contracts.py`、
-   `tests/test_contracts.py`、`tests/test_benchmark_tools.py`、`tests/test_windows_compat.py`
+   `tests/test_contracts.py`、`tests/test_ollama.py`、`tests/test_windows_compat.py`
 6. `python scripts/claude-obsidian.py package validate`
 7. `python scripts/claude-obsidian.py contracts --check-only`
 

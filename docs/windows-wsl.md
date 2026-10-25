@@ -9,14 +9,42 @@ exists, and how to unstick WSL when it misbehaves.
 | Capability | WSL / Linux / macOS | Native Windows (incl. Git Bash) |
 |---|---|---|
 | Inspection, dry-run previews, retrieval | Yes | Yes |
-| Vault writes (`transaction apply`, `init`, `adopt`, `migrate`, `capture apply`, `mode set`) | Yes | No — refused with `UNSUPPORTED_PLATFORM` |
-| Capture queue commands (including read-only `capture queue list`) | Yes | No — currently refused; tracked in [#151](https://github.com/AgriciDaniel/claude-obsidian/issues/151) |
+| Vault writes (`transaction apply`, `init`, `adopt`, `migrate`, `capture apply`, `mode set`) | Yes | No: refused with `UNSUPPORTED_PLATFORM` |
+| Capture queue commands (including read-only `capture queue list`) | Yes | No: currently refused; tracked in [#151](https://github.com/AgriciDaniel/claude-obsidian/issues/151) |
 | Git checkpoints (`checkpoint`) | Linux and macOS only | No |
 | Bash setup scripts and shell test suites | Yes | No (POSIX-only) |
+| Claude Code hooks (`SessionStart`, `Stop`) | Yes (works out of the box) | Partial: requires `python3` on `PATH`; see [below](#claude-code-hooks-and-python3-on-windows) |
 
 Vaults must live on a filesystem with stable file identity: NTFS is fine, but
 FAT/exFAT volumes (typical USB sticks) and some network shares are refused with
-`UNSAFE_VAULT_IDENTITY` — move the vault to NTFS or work inside WSL.
+`UNSAFE_VAULT_IDENTITY`: move the vault to NTFS or work inside WSL.
+
+## Claude Code hooks and python3 on Windows
+
+`hooks/hooks.json` spawns each hook using the [Claude Code exec-form command
+hook](https://code.claude.com/docs/en/hooks): `"command": "python3"` with an
+`args` array. Claude Code resolves `python3` as an executable on `PATH` and
+spawns it directly; there is no shell, so no `.bat` shim, alias function, or
+shell profile is consulted.
+
+WSL and most Linux and macOS Python installs provide a `python3` on `PATH` by
+default, so hooks work there without extra setup. Native Windows commonly does
+not:
+
+- python.org installer: installs `python.exe`, not `python3.exe`. Either add
+  a `python3.exe` shim earlier on `PATH` than the interpreter, install a
+  distribution that provides `python3.exe`, or run Claude Code from WSL so
+  hooks resolve the WSL `python3`.
+- Microsoft Store Python: the `python3` app execution alias can be a stub
+  that opens the Store instead of running Python. Disable the `python3` app
+  execution alias in Windows Settings, then install Python from python.org
+  or WSL and confirm the real interpreter is on `PATH`.
+
+When `python3` cannot be resolved, Claude Code fails to spawn the hook
+process, so claude-obsidian's own code never runs and cannot emit a
+diagnostic. SessionStart context and Stop recovery warnings are both silently
+absent in that case; the rest of claude-obsidian (skills and the CLI) is
+unaffected, since only the optional hook path depends on `python3`.
 
 ## Why writes require WSL
 
@@ -27,8 +55,8 @@ write (see the [compound vault guide](compound-vault-guide.md)). Native Windows
 cannot provide those primitives, so writes are refused up front rather than
 silently running with weaker guarantees.
 
-A degraded native-Windows write mode — default-off, behind an explicit
-reduced-guarantees flag — is under consideration in
+A degraded native-Windows write mode (default-off, behind an explicit
+reduced-guarantees flag) is under consideration in
 [#151](https://github.com/AgriciDaniel/claude-obsidian/issues/151). If WSL is a
 blocker for you, that issue is the place to weigh in.
 

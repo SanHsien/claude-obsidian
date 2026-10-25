@@ -163,3 +163,5 @@ dependency-freshness-report.md
 /wiki/
 /inbox/
 /.raw/
+# Project-scope MCP config may carry commands or credentials; never commit the live file.
+.mcp.json

@@ -48,7 +48,7 @@ $portableTests = @(
     "tests\test_package_validation.py",
     "tests\test_knowledge_contracts.py",
     "tests\test_contracts.py",
-    "tests\test_benchmark_tools.py",
+    "tests\test_ollama.py",
     "tests\test_windows_compat.py"
 )
 foreach ($testFile in $portableTests) {

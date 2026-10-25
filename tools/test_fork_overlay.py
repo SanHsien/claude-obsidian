@@ -120,9 +120,9 @@ def test_readme_keeps_upstream_english_product_contract() -> None:
     assert "FORK.md" in readme
     assert "REVIEW.md" in readme
     assert "docs/windows-wsl.md" in readme
-    assert "Build an Obsidian knowledge base" in readme
-    assert "python3 scripts/claude-obsidian.py init" in readme
-    assert "--approved-plan-sha256" in readme
+    assert "Your AI second brain for" in readme
+    assert "## Install" in readme
+    assert "## FAQ" in readme
 
 
 def test_link_checker_skips_product_readme_and_scans_review() -> None:
