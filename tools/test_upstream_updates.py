@@ -113,3 +113,29 @@ def test_upstream_slug(url, expected):
 def test_shipped_baseline_matches_the_documented_upstream():
     baseline = checker.load_baseline()
     assert checker.upstream_slug(baseline["repo"]) is not None
+
+
+def test_missing_gh_executable_reports_unchecked_rather_than_crashing(monkeypatch):
+    """A machine without `gh` must get "Not checked", not a traceback.
+
+    `subprocess.run` raises FileNotFoundError when the executable is absent, which
+    is not a non-zero exit code; without a handler the whole report is lost.
+    """
+
+    def runner(args, **kwargs):
+        raise FileNotFoundError(args[0])
+
+    monkeypatch.setattr(checker.subprocess, "run", runner)
+    assert checker.collect_new_tickets(BASELINE, "pr") is None
+
+
+def test_missing_git_executable_is_a_reported_check_failure(monkeypatch, tmp_path):
+    """`main()` turns UpstreamCheckError into a report plus exit 2; a bare
+    FileNotFoundError from a missing `git` would skip both."""
+
+    def runner(args, **kwargs):
+        raise FileNotFoundError(args[0])
+
+    monkeypatch.setattr(checker.subprocess, "run", runner)
+    with pytest.raises(checker.UpstreamCheckError):
+        checker.run_git(["status"], tmp_path)

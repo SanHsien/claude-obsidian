@@ -45,14 +45,19 @@ def load_baseline(path: Path = BASELINE_PATH) -> dict:
 
 
 def run_git(args: list[str], repo_dir: Path) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=repo_dir,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-    )
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=repo_dir,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    except OSError as exc:
+        # No `git` on PATH is not a non-zero exit; without this the report and
+        # the exit-2 contract in main() are both skipped.
+        raise UpstreamCheckError(f"git {' '.join(args)} could not run: {exc}") from exc
     if result.returncode != 0:
         raise UpstreamCheckError(
             f"git {' '.join(args)} failed: {result.stderr.strip()}"
@@ -131,20 +136,24 @@ def collect_new_tickets(baseline: dict, kind: str) -> list[dict] | None:
     if not slug:
         return None
     watermark = int(baseline.get(f"reviewed_{kind}_through", 0) or 0)
-    result = subprocess.run(
-        [
-            "gh", kind, "list", "--repo", slug, "--state", "all",
-            "--limit", "1000", "--json", "number,title",
-        ],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        # `errors` is not optional here. Ticket titles are written by strangers
-        # and the console this runs on is not always UTF-8; without it a single
-        # undecodable byte raises UnicodeDecodeError and the whole upstream
-        # check dies instead of reporting the tickets it did read.
-        errors="replace",
-    )
+    try:
+        result = subprocess.run(
+            [
+                "gh", kind, "list", "--repo", slug, "--state", "all",
+                "--limit", "1000", "--json", "number,title",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            # `errors` is not optional here. Ticket titles are written by strangers
+            # and the console this runs on is not always UTF-8; without it a single
+            # undecodable byte raises UnicodeDecodeError and the whole upstream
+            # check dies instead of reporting the tickets it did read.
+            errors="replace",
+        )
+    except OSError:
+        # `gh` is not installed: the same "could not answer" as a failed call.
+        return None
     if result.returncode != 0:
         return None
     try:
