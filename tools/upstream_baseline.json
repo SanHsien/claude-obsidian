@@ -5,5 +5,6 @@
   "reviewed_date": "2026-10-25",
   "notes": "Fork overlay established at upstream fix: harden recovery and response boundaries. No product commits adopted beyond the fork point. Subsequent upstream commits, PRs, and issues require review. 2026-08-30：PR 水位 180 → 182。水位以上只有 #182 一筆（#181 不是 PR，issue 與 PR 共用編號空間），已讀 diff 並採用（設定釘死，理由與『上游前提在本 fork 不成立』的實查見 docs/fork/DECISIONS.md 同日條目）。 2026-09-30：審查至 v2.2.0；採用 4 組修正，其餘見 docs/fork/DECISIONS.md。 2026-10-25：審查至 v3.0.1（2e54556），整批採用產品樹，PR 水位 210、issue 水位 210；未採項目與觸發條件見 docs/fork/DECISIONS.md 同日條目。",
   "reviewed_pr_through": 210,
-  "reviewed_issue_through": 210
+  "reviewed_issue_through": 210,
+  "decision_log": "docs/fork/DECISIONS.md"
 }

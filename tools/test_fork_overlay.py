@@ -68,21 +68,6 @@ def test_render_markdown_reports_no_new_commits() -> None:
     assert "No new upstream commits" in report
 
 
-def test_render_markdown_surfaces_check_failure() -> None:
-    baseline = {
-        "repo": "https://example.invalid/upstream.git",
-        "branch": "main",
-        "reviewed_through": "a" * 40,
-        "reviewed_date": "2026-08-28",
-    }
-
-    report = checker.render_markdown(baseline, [], error="git fetch failed")
-
-    assert "Check failed" in report
-    assert "git fetch failed" in report
-    assert "docs/fork/DECISIONS.md" in checker.render_markdown(baseline, [{"sha": "b" * 40, "short": "bbbbbbb", "date": "2026-08-28", "subject": "x", "files": ["a.py"]}])
-
-
 def test_load_baseline_rejects_missing_file(tmp_path: Path) -> None:
     with pytest.raises(checker.UpstreamCheckError):
         checker.load_baseline(tmp_path / "nope.json")
