@@ -103,3 +103,7 @@ workspace-configured vault outside the project also requires an exact
 - Public canonical repository: https://github.com/AgriciDaniel/claude-obsidian
 - LLM Wiki pattern: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
 - Obsidian primitives: https://github.com/kepano/obsidian-skills
+
+## Roadmap
+
+- `ROADMAP.md` is the single source of truth for this repository's next work. When you finish or add work, update it in the same commit: delete finished rows, add new ones. Do not keep a to-do list in any other file.
