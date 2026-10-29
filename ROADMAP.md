@@ -5,13 +5,12 @@
 
 ## 現況
 
-這是 AgriciDaniel/claude-obsidian（Obsidian＋Claude Code 本機知識庫外掛）的 Windows-first 維護 fork，產品樹已整批併入上游 v3.0.1。維護面健康：`main` 上 CodeQL、Hermetic verification、Fork maintenance、Upstream check 最近一次皆 success，open PR 0 筆、Dependabot 與 Code scanning 告警 0 筆；issue 功能已停用，issue 數「未查到」不是 0（2026-10-29 `gh` 查詢）。但上游在水位（PR 210、issue 210，`tools/upstream_baseline.json`）之後又有 PR #211、#213 與 issue #212（均 open，`gh pr list -R AgriciDaniel/claude-obsidian --state all`），尚未審；另外 `Dependency freshness` 只由每月排程與手動觸發，最近一次是 2026-10-01，早於 10-25 的整批併入。
+這是 AgriciDaniel/claude-obsidian（Obsidian＋Claude Code 本機知識庫外掛）的 Windows-first 維護 fork，產品樹已整批併入上游 v3.0.1。維護面健康：`main` 上 CodeQL、Hermetic verification、Fork maintenance、Upstream check 最近一次皆 success，open PR 0 筆、Dependabot 與 Code scanning 告警 0 筆；issue 功能已停用，issue 數「未查到」不是 0（2026-10-29 `gh` 查詢）。上游 PR 水位已審至 #215、issue 水位審至 #212（`tools/upstream_baseline.json`），上游暫無待審項目；目前 `Dependency freshness` 只由每月排程與手動觸發，最近一次是 2026-10-01，早於 10-25 的整批併入。
 
 ## 近期：可以直接動手
 
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
-| 審上游 PR #211、#213 與 issue #212 並推進水位 | 三者編號都在水位 210 之後。其中 #212／#213 指出 3.0.1 的 `claude_obsidian/limits.py:11` 用 `int \| str` 註解，在 Python 3.9 import 失敗；本 fork 的 CI 矩陣只測 Python 3.11–3.14（`.github/workflows/test.yml:25`），所以多半不影響本線，需確認後記為略過或採用。#211（github-actions 升級）照 `docs/fork/DECISIONS.md:246` 對 PR #205 的前例，記為「交本線 Dependabot」，本線 Dependabot PR 出現時才處理 | 讀完 diff，結論（採用／略過＋理由＋觸發條件）寫入 `docs/fork/DECISIONS.md`；`tools/upstream_baseline.json` 水位推進；`python tools/check_upstream_updates.py --strict` exit 0；`tools\dev_check.ps1` 綠 | Claude Sonnet | `gh issue view 212 -R AgriciDaniel/claude-obsidian`；`gh pr view 213 -R AgriciDaniel/claude-obsidian`；`claude_obsidian/limits.py:11` |
 | 手動觸發 `Dependency freshness` 驗證 10-25 整批併入之後的依賴狀態 | 該 workflow 只有 cron（每月 1 日）與 `workflow_dispatch`，最近一次成功早於整批併入；紅燈只能靠它發現 | `gh workflow run "Dependency freshness" -R SanHsien/claude-obsidian` 後該 run 結論為 success，或每個紅項都有 `# freshness-hold:` 或 deferrals 條目與理由 | Claude Haiku | `gh run list -R SanHsien/claude-obsidian --workflow "Dependency freshness"`；`.github/workflows/dependency-freshness.yml:3-6` |
 
 ## 中期：等條件成立再做

@@ -249,3 +249,19 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 | issue #200（flat vault 掃 0 頁）、#193、PR #194/#195/#198/#199（已關閉） | #200／#193 已於 3.0 修正；#194/#195/#198/#199 關閉未合併：#195 是 Haiku 5.5 模型名，3.0 已含 `claude-haiku-5-5`（見 `tests/test_contextual_prefix.py`），其餘為多語系與 canvas 索引，不對應本 fork 獨有缺陷 | 無 |
 
 **水位**：commit `2e54556`（v3.0.1 後的 star-history 合併）、PR 210、issue 210。
+
+## 2026-10-30：上游審查（0 commit / PR #211–#215 / issue #212）
+
+上游 `main` 無新 commit，tip 仍為 `2e54556`。審查水位 210 之後的 PR #211–#215 與 issue #212。
+
+**採用**：無。
+
+**不採**
+
+| 項目 | 理由（可查證） | 觸發條件 |
+| --- | --- | --- |
+| PR #211（github-actions 升級） | 上游**未合併**。與 PR #205 前例相同，僅為 GitHub Actions 版本升級（`actions/checkout` 7.0.0→7.0.1、`codeql-action` 4.38.2→4.38.3、`setup-python` 6.3.0→7.0.0），非缺陷修復；本 fork 的 GitHub Actions 版本由本線 Dependabot 排程 PR 自行管理，不從上游 PR 採用 | 本線 Dependabot PR 出現時照 CI 全綠＋人工審查合併 |
+| issue #212、PR #213（limits.py 延遲註解以相容 Python 3.9） | 上游**未合併**。`claude_obsidian/limits.py:11` 的 `ledger_capacity_message` 使用 `int \| str` 聯集語法且未加延遲註解，導致 Python 3.9 在模組載入期求值失敗；但本 fork 支援矩陣與 CI 僅針對 Python 3.11–3.14（`.github/workflows/test.yml:25`），本機開發與執行環境均為 3.11+，不影響本線運作。依 fork 原則（產品樹以上游為準，fork 僅加 overlay），不在上游合併前提前分歧改寫產品樹 | 上游合併 PR #213 或釋出新 release，或本 fork 產生相容 Python 3.9 之實際需求 |
+| PR #214、PR #215（主機中立 workspace 設定與環境變數重構） | 上游**未合併**且作者已自行關閉（作者表示轉至獨立儲存庫開發）。PR 試圖將專案設定檔（`.claude-obsidian.json` → `.obsidian-wiki.json`）與環境變數（`CLAUDE_OBSIDIAN_*` → `OBSIDIAN_WIKI_*`）大規模改名，屬重大破壞性變更（breaking changes），且非上游官方架構方向，本 fork 亦無需求 | 無 |
+
+**水位**：commit `2e54556`、PR 215、issue 212。
