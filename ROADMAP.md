@@ -5,13 +5,11 @@
 
 ## 現況
 
-這是 AgriciDaniel/claude-obsidian（Obsidian＋Claude Code 本機知識庫外掛）的 Windows-first 維護 fork，產品樹已整批併入上游 v3.0.1。維護面健康：`main` 上 CodeQL、Hermetic verification、Fork maintenance、Upstream check 最近一次皆 success，open PR 0 筆、Dependabot 與 Code scanning 告警 0 筆；issue 功能已停用，issue 數「未查到」不是 0（2026-10-29 `gh` 查詢）。上游 PR 水位已審至 #215、issue 水位審至 #212（`tools/upstream_baseline.json`），上游暫無待審項目；目前 `Dependency freshness` 只由每月排程與手動觸發，最近一次是 2026-10-01，早於 10-25 的整批併入。
+這是 AgriciDaniel/claude-obsidian（Obsidian＋Claude Code 本機知識庫外掛）的 Windows-first 維護 fork，產品樹已整批併入上游 v3.0.1。維護面健康：`main` 上 CodeQL、Hermetic verification、Fork maintenance、Upstream check 最近一次皆 success，open PR 0 筆、Dependabot 與 Code scanning 告警 0 筆；issue 功能已停用，issue 數「未查到」不是 0（2026-10-29 `gh` 查詢）。上游 PR 水位已審至 #215、issue 水位審至 #212（`tools/upstream_baseline.json`），上游暫無待審項目；`Dependency freshness` 只由每月排程與手動觸發；2026-10-31 起手動觸發都因 pytest 9.2、ruff 0.17 待審而紅，實跑後記為 deferral（[docs/fork/DECISIONS.md](docs/fork/DECISIONS.md) 2026-11-02 段）。
 
 ## 近期：可以直接動手
 
-| 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
-| --- | --- | --- | --- | --- |
-| 手動觸發 `Dependency freshness` 驗證 10-25 整批併入之後的依賴狀態 | 該 workflow 只有 cron（每月 1 日）與 `workflow_dispatch`，最近一次成功早於整批併入；紅燈只能靠它發現 | `gh workflow run "Dependency freshness" -R SanHsien/claude-obsidian` 後該 run 結論為 success，或每個紅項都有 `# freshness-hold:` 或 deferrals 條目與理由 | Claude Haiku | `gh run list -R SanHsien/claude-obsidian --workflow "Dependency freshness"`；`.github/workflows/dependency-freshness.yml:3-6` |
+目前沒有可直接動手的項目。
 
 ## 中期：等條件成立再做
 

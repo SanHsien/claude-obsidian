@@ -265,3 +265,13 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 | PR #214、PR #215（主機中立 workspace 設定與環境變數重構） | 上游**未合併**且作者已自行關閉（作者表示轉至獨立儲存庫開發）。PR 試圖將專案設定檔（`.claude-obsidian.json` → `.obsidian-wiki.json`）與環境變數（`CLAUDE_OBSIDIAN_*` → `OBSIDIAN_WIKI_*`）大規模改名，屬重大破壞性變更（breaking changes），且非上游官方架構方向，本 fork 亦無需求 | 無 |
 
 **水位**：commit `2e54556`、PR 215、issue 212。
+
+## 2026-11-02：依賴新鮮度（pytest 9.2、ruff 0.17）
+
+**問題**：10-25 整批併入上游 v3.0.1 後，首次手動觸發 `Dependency freshness`（run 41171416050，2026-10-31）起即因 `pytest>=9.1`（PyPI 9.2.0）、`ruff>=0.16`（PyPI 0.17.3）待審而紅；2026-11-02 的 run 41379320363、41446466790 同樣失敗。
+
+**決定**：兩者都記為 deferral（`.github/dependency-deferrals.json`），下限不動。下限是相容承諾，不是靜音鍵；`>=9.1`、`>=0.16` 本來就涵蓋新版本。
+
+**證據**：以 pytest 9.2.0、ruff 0.17.3 實跑 `python -m pytest tools -q`（48 passed）與 `ruff check --select E9,F --target-version py311 tools`（clean）。
+
+**觸發條件**：PyPI 出現 pytest 9.3 或 ruff 0.18 時 deferral 自動失效，重新審查。

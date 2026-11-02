@@ -1,3 +1,12 @@
 {
-  "deferrals": {}
+  "deferrals": {
+    "pytest": {
+      "deferredLatest": "9.2",
+      "reason": "2026-11-02 reviewed pytest 9.2.0: python -m pytest tools -q passes (48 passed); >=9.1 already admits 9.2, floor stays. Expires at 9.3."
+    },
+    "ruff": {
+      "deferredLatest": "0.17",
+      "reason": "2026-11-02 reviewed ruff 0.17.3: ruff check --select E9,F --target-version py311 tools clean; >=0.16 already admits 0.17, floor stays. Expires at 0.18."
+    }
+  }
 }
