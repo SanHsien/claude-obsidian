@@ -19,7 +19,7 @@
 | 項目 | 說明 |
 |---|---|
 | `README.md` | 上游英文產品說明 + 頂部 fork overlay。繁中維護在 `FORK.md`／`REVIEW.md` |
-| `AGENTS.md` / copilot／cursor／windsurf 指示 | 開頭加上本 fork overlay；下文仍是上游產品規則。不新增根目錄 `CLAUDE.md`：本 checkout 有 `.claude-plugin/marketplace.json`，產品契約禁止同時存在 host-only `CLAUDE.md` |
+| `AGENTS.md` / `ZCODE.md` / copilot／cursor／windsurf 指示 | 開頭加上本 fork overlay；下文仍是上游產品規則。不新增根目錄 `CLAUDE.md`：本 checkout 有 `.claude-plugin/marketplace.json`，產品契約禁止同時存在 host-only `CLAUDE.md` |
 | `CONTRIBUTING.md` / `SECURITY.md` / `CODE_OF_CONDUCT.md` | 開頭 overlay：本線 overlay 問題走 SanHsien；產品貢獻與產品漏洞仍指向上游 |
 | `CODEOWNERS` | `* @SanHsien`。產品行為貢獻仍請去上游 |
 | issue 模板 | `bug_report.md`／`feature_request.md` 開頭標明產品請走上游 |
@@ -30,6 +30,7 @@
 | `.github/workflows/test.yml` | **保留並在本 fork 跑**，這是產品回歸 |
 | `docs/fork/` | Windows 開發、上游審查、決策、本 fork 變更紀錄 |
 | `REVIEW.md` | 風險快照，不是每個一般 bug 的流水帳 |
+| `RELEASE_MANIFEST.json` / `SHA256SUMS` | 根目錄這兩份是上游 release 的快照，**不代表本 fork 的檔案樹**，雜湊對不上是預期。本線不發 release；`release build` 時會重新產生。見 `docs/fork/DECISIONS.md` 2026-11-20 段 |
 
 產品 `skills/`、`claude_obsidian/`、`hooks/`、`scripts/` 以上游為準，除非有已記錄的 fork 修正。目前已記錄的產品檔修正：`config/release-allowlist.json`（排除 `docs/fork/**`、overlay workflow／Dependabot、`.cursor/rules/no-upstream-pr.mdc`）、根目錄 `.gitignore` 的 vault 路徑、`CODEOWNERS`、issue／宿主指示檔 overlay。
 

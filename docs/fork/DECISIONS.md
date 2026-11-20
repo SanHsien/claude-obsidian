@@ -208,6 +208,8 @@ vault 相對路徑解析、沒有模糊比對，所以 Obsidian 預設的 shorte
 **略過**
 
 - `72d5ea0`、`c6ac45f`、`508d062`（ZCode host adapter）：本 fork 未支援該主機，not-applicable。
+  **已被取代**：2026-10-25 整批採用 v3.0.1 時這個 adapter（`ZCODE.md`、`--host zcode`）一併進來；
+  後續處理見 2026-11-20 段。
 - `de69799`（python3 需求文件）、`891214f`（credit）、`e18e023`/`882947c`（wiki-ingest 文件連結）、
   `a154774`/`ccd0c61`（#182，已於 2026-08-30 採用）、`de39db6`/`9c640c0`/`32ac5a0`（v2.2.0 版本／manifest，
   fork 自有 manifest）、`31cc748`/`012fd2d`/`3be2974`/`01a912d`/`cd43681`（squash 重複）：文件、版本或已涵蓋。
@@ -275,3 +277,41 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 **證據**：以 pytest 9.2.0、ruff 0.17.3 實跑 `python -m pytest tools -q`（48 passed）與 `ruff check --select E9,F --target-version py311 tools`（clean）。
 
 **觸發條件**：PyPI 出現 pytest 9.3 或 ruff 0.18 時 deferral 自動失效，重新審查。
+
+## 2026-11-20：ZCODE.md 補 overlay、根目錄 release manifest 定位、連結檢查補漏
+
+來源：2026-11-20 增量審查（`cacbcc8..ab3dd42`）的 F-1、F-5、F-6。
+
+**ZCODE.md 加 overlay（F-1）**
+
+- **決定**：`ZCODE.md` 開頭加上與其他宿主指示檔同類的 fork overlay，產品正文與 Public canonical
+  上游 URL 保留。`tools/test_fork_overlay.py::test_host_instruction_files_have_fork_overlay` 改成從內容
+  探索宿主指示檔（凡是要宿主「Read `AGENTS.md`」的追蹤檔），不再手寫清單。
+- **理由**：`GEMINI.md` 是本 fork 依維護者 2026-10-24 指示刪除的（上游仍保留），`ZCODE.md` 則是
+  v3.0.1 帶進來的上游 adapter，而且在 `config/release-allowlist.json` 的 `include_files`。刪 `GEMINI.md`
+  時測試只從清單拿掉一項，沒有人把新的 adapter 補進去，R-15 對它已經沒有保護。手寫清單會再漏，
+  所以改成探索；探索結果另外斷言至少含已知的四個檔，避免「什麼都沒找到所以全過」。
+- **不採的另一案**：只靠 `ZCODE.md` 第 3 行導向 `AGENTS.md`。那是間接保護，跟 copilot／cursor／windsurf
+  的處理不一致。
+- **觸發條件**：上游新增或改名宿主 adapter 時，探索會自動要求它帶 overlay；測試紅了就補 overlay，
+  不要改測試。
+
+**根目錄 `RELEASE_MANIFEST.json`／`SHA256SUMS` 是上游快照（F-5）**
+
+- **決定**：不重新產生，維持與上游逐位元組相同；在 `FORK.md` 的差異表註明它們是上游 release 的快照，
+  不代表本 fork 的檔案樹。
+- **理由**：兩檔是上游 release `b5f4fd0` 的產物（`source_commit`），本 fork 不發 release（`ROADMAP.md`
+  刻意不做、2026-08-28 CODEOWNERS 段）。`claude_obsidian/release.py` 的 `GENERATED_NAMES` 在 build 時
+  一定重新產生這兩檔，根目錄版本不會進產物。用本線工具重產會讓產品檔跟上游分歧，而且每次 overlay
+  改動都要跟著重產，換到的只是一份沒人用的雜湊表。2026-11-20 實查（含本次 `ZCODE.md` overlay）：264 筆中
+  `GEMINI.md` 缺檔、20 筆雜湊不符，全是 overlay 檔或已記錄的 fork 修正。
+- **觸發條件**：維護者決定發布本 fork 自己的 release 時，由 `release build` 產生並改由本線維護。
+
+**連結檢查補掃 `AGENTS.md`、`ROADMAP.md` 與宿主指示檔（F-6）**
+
+- **決定**：`tools/check_links.py` 的掃描清單加入 `AGENTS.md`、`ROADMAP.md`、`ZCODE.md`、cursor 與 windsurf
+  規則檔；程式碼區塊與 inline code 裡的連結語法不檢查；HTML `src` 屬性不做標題切分。
+- **理由**：`GEMINI.md` 併進 `AGENTS.md` 後，`AGENTS.md` 是帶 overlay 相對連結的主要宿主檔，`ROADMAP.md`
+  是 fork 自有檔，兩者都沒掃。補掃 `ROADMAP.md` 會撞上它自己記著的 `<img src="a b.png">` 誤報，所以
+  路線圖那一列一併做掉。本檔是 fork 自有版本，與 repo-fleet-ops 的 `tools/check_links.py` 不同（後者
+  掃全部追蹤的 Markdown），所以在這裡修。
