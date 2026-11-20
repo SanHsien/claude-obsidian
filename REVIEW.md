@@ -92,7 +92,7 @@ tests/test_release.py CanonicalPolicyTests.test_repository_allowlist_is_canonica
 | F-3 | hardening | `load_baseline` 不容忍 UTF-8 BOM。 | 同 F-2，於 canonical 端修。 |
 | F-4 | hardening | baseline `decision_log` 路徑沒有測試鎖住。 | 同 F-2，於 canonical 端修。 |
 | F-5 | hardening | 根目錄 `RELEASE_MANIFEST.json`／`SHA256SUMS` 是上游快照，列著已刪的 `GEMINI.md`，overlay 檔雜湊對不上。 | 依慣例不重產（本線不發 release，`release build` 會重產）；於 `68c7bb4`（2026-11-20）在 `FORK.md` 與 DECISIONS 註明為上游快照。 |
-| F-6 | hardening | `check_links.py` 沒掃 `AGENTS.md`、`ROADMAP.md`。 | 已修 `ae5bb10`（2026-11-20）：本檔是 fork 自有版本（與 repo-fleet-ops 的不同），補掃兩檔與宿主規則檔；順手修掉 code span 誤報與 HTML `src` 被切分（ROADMAP 原列項），測試 `test_link_checker_scans_every_file_that_carries_overlay_links`、`test_code_is_not_a_link`、`test_html_src_with_a_space_is_one_target`。 |
+| F-6 | hardening | `check_links.py` 沒掃 `AGENTS.md`、`ROADMAP.md`。 | 已修 `ae5bb10`（2026-11-20）：本檔是 fork 自有版本（與 repo-fleet-ops 的不同），補掃兩檔與宿主規則檔；順手修掉 code span 誤報與 HTML `src` 被切分（ROADMAP 原列項），測試 `test_link_checker_scans_every_file_that_carries_overlay_links`、`test_code_is_not_a_link`、`test_html_src_with_a_space_is_one_target`。獨立驗收再找到兩個缺口（inline code 跨段落吞掉真斷連結、"```x```" 開頭的行被當 fence 藏住後文），已修 `82adc01`（2026-11-20），測試 `test_inline_code_does_not_cross_a_blank_line`、`test_backtick_line_with_backticks_in_info_is_not_a_fence`；宿主檔探索改為不限措辭（`test_host_discovery_does_not_depend_on_one_wording`）。 |
 
 ## 刻意不修
 
