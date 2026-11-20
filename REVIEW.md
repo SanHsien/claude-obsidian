@@ -1,6 +1,6 @@
 # Repository review（Windows-first）
 
-- Review date: 2026-08-28
+- Review date: 2026-08-28；增量審查 2026-11-20（`cacbcc8..ab3dd42`，見下方「2026-11-20 增量審查」）
 - Review baseline: overlay `8d945a7900231c94c38065f412de41fcea91091e`；本輪修復另記於後續 commit
 - Upstream reviewed through: `ad67087cad22ad84cc3288f915588ae42c0c2b44`
 - Upstream watermarks: PR `reviewed_pr_through` = **180**；issue `reviewed_issue_through` = **181**
@@ -78,8 +78,21 @@ tests/test_release.py CanonicalPolicyTests.test_repository_allowlist_is_canonica
 | R-12 | P3 | `CODEOWNERS` 仍是 `@AgriciDaniel`。本線不回貢，對方不是 collaborator，Dependabot／外部 PR 會卡死。 | 改為 `* @SanHsien`。該檔仍在 release `include_files`；本線不代發產品 zip。 |
 | R-13 | P3 | `bug_report.md`／`feature_request.md` 沒標明產品請走上游。 | 開頭加上 overlay，指向上游產品 repo 與本線 `FORK.md`。 |
 | R-14 | P3 | overlay workflow／Dependabot 會經 `.github/workflows/*.yml` 與 `.github/*.yml` 進公開 zip。 | `exclude_globs` 排除五個 overlay 檔；產品 `test.yml` 與 `FUNDING.yml` 仍進去。 |
-| R-15 | P3 | `GEMINI.md`、copilot、cursor、windsurf 指示沒有 fork overlay。 | 開頭加上 overlay；產品正文與 Public canonical 上游 URL 保留。 |
+| R-15 | P3 | `GEMINI.md`、copilot、cursor、windsurf 指示沒有 fork overlay。 | 開頭加上 overlay；產品正文與 Public canonical 上游 URL 保留。`GEMINI.md` 已刪；上游 `ZCODE.md` 於 `d72e2d7`（2026-11-20）補上，見 F-1。 |
 | R-16 | P3 | `.cursor` 在 `include_roots`，fork-only `no-upstream-pr.mdc` 會進公開 zip。 | `exclude_globs` 排除該檔。 |
+
+## 2026-11-20 增量審查
+
+範圍 `cacbcc8..ab3dd42`。產品樹與上游 v3.0.1 tip `2e54556` 逐位元組相同，findings 都在 fork overlay。
+
+| ID | 分類 | Finding | 狀態 |
+|---|---|---|---|
+| F-1 | P3 | `ZCODE.md`（上游 ZCode adapter，進公開 zip）沒有 fork overlay；R-15 測試刪 `GEMINI.md` 時沒補上它；DECISIONS 仍記 ZCode not-applicable。 | 已修 `d72e2d7`（2026-11-20）：加 overlay，`test_host_instruction_files_have_fork_overlay` 改為從內容探索宿主檔。DECISIONS 更正於 `68c7bb4`。 |
+| F-2 | needs_validation | `check_upstream_updates.py` 把任何含 "not found" 的 `gh` 錯誤當成「已漂移」，該是「無法檢查」。 | 不在本 repo 修：該檔是 repo-fleet-ops canonical 的逐字副本，於 canonical 端修後再同步。 |
+| F-3 | hardening | `load_baseline` 不容忍 UTF-8 BOM。 | 同 F-2，於 canonical 端修。 |
+| F-4 | hardening | baseline `decision_log` 路徑沒有測試鎖住。 | 同 F-2，於 canonical 端修。 |
+| F-5 | hardening | 根目錄 `RELEASE_MANIFEST.json`／`SHA256SUMS` 是上游快照，列著已刪的 `GEMINI.md`，overlay 檔雜湊對不上。 | 依慣例不重產（本線不發 release，`release build` 會重產）；於 `68c7bb4`（2026-11-20）在 `FORK.md` 與 DECISIONS 註明為上游快照。 |
+| F-6 | hardening | `check_links.py` 沒掃 `AGENTS.md`、`ROADMAP.md`。 | 已修 `ae5bb10`（2026-11-20）：本檔是 fork 自有版本（與 repo-fleet-ops 的不同），補掃兩檔與宿主規則檔；順手修掉 code span 誤報與 HTML `src` 被切分（ROADMAP 原列項），測試 `test_link_checker_scans_every_file_that_carries_overlay_links`、`test_code_is_not_a_link`、`test_html_src_with_a_space_is_one_target`。 |
 
 ## 刻意不修
 
