@@ -17,7 +17,6 @@
 | --- | --- | --- | --- | --- |
 | 審上游 PR #210（NFC／NFD）與 #202（內容管線工具） | 上游合併，或本線 vault 出現 NFD 檔名／有內容管線需求 | 讀 diff 後採用或略過，結論記入 `docs/fork/DECISIONS.md`；`tools\dev_check.ps1` 綠 | Claude Sonnet | `docs/fork/DECISIONS.md:242-249` |
 | 評估讓 CodeQL 也掃 `actions` 語言（workflow 本身） | 維護者想檢查 workflow 注入面，或 新增會讀外部輸入（issue／PR 內容、`workflow_run` 事件等）的 workflow | CodeQL 矩陣新增 `actions`；該 workflow 在 `main` 綠；新增的告警筆數用 `gh api repos/SanHsien/claude-obsidian/code-scanning/alerts?state=open` 查並逐筆處理 | Claude Sonnet | `docs/fork/DECISIONS.md` 2026-10-25「`dependabot.yml`、`codeql.yml` 上游版」列 |
-| 補 `check_links.py` 對 `<img src="a b.png">` 的處理（跳過標題切分） | 文件出現含空白的 HTML `src` 寫法 | 新增測試：該寫法不再被誤報缺檔，修前紅修後綠；`pytest tools` 綠 | Codex | 深掃報告（2026-10-26）「刻意不修」 |
 | 在 Linux 上跑完整產品測試與 release build | 取得 Linux／CI runner 並決定要發布本 fork 自己的 release | 一次完整 Linux 測試與 build 的 workflow 紀錄為 success | 維護者 | 接續開發報告（2026-10-25）：本機 Windows 無法跑 Linux 完整測試與 release build |
 
 ## 刻意不做

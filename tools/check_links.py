@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """檢查本 fork overlay 文件之間的相對連結。
 
-只驗 overlay 文件：FORK.md、NOTICE.md、REVIEW.md、
+只驗 overlay 文件：AGENTS.md、FORK.md、NOTICE.md、REVIEW.md、ROADMAP.md、
 SECURITY.md、CONTRIBUTING.md、CODE_OF_CONDUCT.md、docs/fork/、
-以及已加 overlay 的 GitHub 模板／copilot 指示。
+以及已加 overlay 的 GitHub 模板與宿主指示（copilot／cursor／windsurf／ZCODE.md）。
+程式碼區塊與 inline code 裡的連結語法是範例，不檢查。
 不掃根目錄 README.md：那是上游英文產品契約，由產品 CI 負責。
 不掃 CLAUDE.md：本產品 checkout 依契約不得有該檔。
 
@@ -27,14 +28,27 @@ SKIP_NAMES = {
     "dependency-freshness-report.md",
 }
 
+FENCE_PATTERN = re.compile(r"(?ms)^[ \t]*(```|~~~).*?^[ \t]*\1[^\n]*$")
+INLINE_CODE_PATTERN = re.compile(r"(`+)(?!`).*?(?<!`)\1(?!`)", re.DOTALL)
+
 FORK_DOCUMENTS = [
+    ROOT / "AGENTS.md",
     ROOT / "FORK.md",
     ROOT / "NOTICE.md",
     ROOT / "REVIEW.md",
+    ROOT / "ROADMAP.md",
     ROOT / "SECURITY.md",
     ROOT / "CONTRIBUTING.md",
     ROOT / "CODE_OF_CONDUCT.md",
+    ROOT / "ZCODE.md",
+    ROOT / ".cursor" / "rules" / "claude-obsidian.mdc",
+    ROOT / ".windsurf" / "rules" / "claude-obsidian.md",
 ]
+
+
+def _strip_code(text: str) -> str:
+    """Link syntax quoted in a fence or code span is an example, not a link."""
+    return INLINE_CODE_PATTERN.sub("", FENCE_PATTERN.sub("", text))
 
 
 def iter_documents() -> list[Path]:
@@ -58,12 +72,14 @@ def iter_documents() -> list[Path]:
     ]
 
 
-def _missing_relative(path: Path, target: str) -> str | None:
+def _missing_relative(path: Path, target: str, *, has_title: bool = True) -> str | None:
+    # A quoted HTML `src` (has_title=False) is the whole destination: a space in
+    # it is part of the filename, not the start of a title.
     target = target.strip()
-    if target.startswith("<"):
+    if has_title and target.startswith("<"):
         # `<a path with spaces.md> "optional title"`
         target = target[1:].split(">", 1)[0].strip()
-    elif target:
+    elif has_title and target:
         # `path.md "optional title"`: the title is not part of the destination.
         target = target.split(None, 1)[0]
     if not target or target.startswith(SKIP_PREFIXES):
@@ -87,15 +103,15 @@ def _missing_relative(path: Path, target: str) -> str | None:
 
 def check_document(path: Path) -> list[str]:
     problems: list[str] = []
-    text = path.read_text(encoding="utf-8")
+    text = _strip_code(path.read_text(encoding="utf-8"))
     # `![a](b)` also contains the link `[a](b)`; report each target once.
     targets = dict.fromkeys(
-        match.group(1)
+        (match.group(1), pattern is not HTML_SRC_PATTERN)
         for pattern in (LINK_PATTERN, IMAGE_PATTERN, HTML_SRC_PATTERN)
         for match in pattern.finditer(text)
     )
-    for target in targets:
-        missing = _missing_relative(path, target)
+    for target, has_title in targets:
+        missing = _missing_relative(path, target, has_title=has_title)
         if missing:
             problems.append(missing)
     return problems

@@ -124,6 +124,51 @@ def test_link_checker_skips_product_readme_and_scans_review() -> None:
     assert ".github/ISSUE_TEMPLATE/bug_report.md" in rels
 
 
+def test_link_checker_scans_every_file_that_carries_overlay_links() -> None:
+    """AGENTS.md is the only host file left with overlay links once GEMINI.md
+    was folded into it, and ROADMAP.md is fork-owned; neither was scanned, so a
+    renamed FORK.md or docs/fork file would break them silently. Host adapter
+    files are discovered, so a new upstream adapter is covered automatically."""
+    rels = {path.relative_to(ROOT).as_posix() for path in check_links.iter_documents()}
+    host_files = {
+        path.relative_to(ROOT).as_posix() for path in _host_instruction_files()
+    }
+
+    missing = ({"AGENTS.md", "ROADMAP.md"} | host_files) - rels
+    assert not missing, missing
+
+
+def test_code_is_not_a_link(tmp_path: Path, monkeypatch) -> None:
+    """Link syntax quoted in a code span or fence is an example, not a link.
+    ROADMAP.md quotes `<img src="a b.png">` and was reported as missing `a`."""
+    monkeypatch.setattr(check_links, "ROOT", tmp_path)
+    doc = tmp_path / "doc.md"
+    doc.write_text(
+        'Quote `<img src="a b.png">` and `[x](gone.md)` inline.\n'
+        "\n"
+        "```markdown\n"
+        "[y](also-gone.md)\n"
+        "```\n",
+        encoding="utf-8",
+    )
+
+    assert check_links.check_document(doc) == []
+
+
+def test_html_src_with_a_space_is_one_target(tmp_path: Path, monkeypatch) -> None:
+    """A quoted `src` attribute has no title part; splitting it on whitespace
+    reported `a` missing when the real file `a b.png` exists."""
+    monkeypatch.setattr(check_links, "ROOT", tmp_path)
+    (tmp_path / "a b.png").write_bytes(b"")
+    doc = tmp_path / "doc.md"
+    doc.write_text('<img src="a b.png">\n<img src="gone b.png">\n', encoding="utf-8")
+
+    problems = check_links.check_document(doc)
+
+    assert len(problems) == 1
+    assert "gone b.png" in problems[0]
+
+
 def test_missing_relative_rejects_path_escape() -> None:
     problem = check_links._missing_relative(ROOT / "FORK.md", "../outside-the-repo")
 
