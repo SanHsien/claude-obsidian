@@ -246,12 +246,38 @@ def test_release_allowlist_excludes_fork_docs() -> None:
         assert name in excluded
 
 
-def test_host_instruction_files_have_fork_overlay() -> None:
-    files = (
-        ROOT / ".github" / "copilot-instructions.md",
-        ROOT / ".cursor" / "rules" / "claude-obsidian.mdc",
-        ROOT / ".windsurf" / "rules" / "claude-obsidian.md",
+def _host_instruction_files() -> list[Path]:
+    """Every tracked file that sends a host to `AGENTS.md` is a host entry point.
+
+    Discovered from content, not listed by hand: upstream adds and renames host
+    adapters (GEMINI.md went away, ZCODE.md arrived) and a hand-kept list
+    silently stopped covering the new one.
+    """
+    result = subprocess.run(
+        [
+            "git", "grep", "-l", "-I", "--fixed-strings", "Read `AGENTS.md`",
+            # Overlay tooling and fork docs quote the phrase; they are not hosts.
+            "--", ".", ":!tools", ":!docs/fork",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
     )
+    return [ROOT / line for line in result.stdout.splitlines() if line]
+
+
+def test_host_instruction_files_have_fork_overlay() -> None:
+    files = _host_instruction_files()
+    found = {path.relative_to(ROOT).as_posix() for path in files}
+    # Guard the discovery itself: if it finds nothing, the loop below proves nothing.
+    assert {
+        ".github/copilot-instructions.md",
+        ".cursor/rules/claude-obsidian.mdc",
+        ".windsurf/rules/claude-obsidian.md",
+        "ZCODE.md",
+    } <= found, found
     for path in files:
         text = path.read_text(encoding="utf-8")
         assert "SanHsien" in text, path
