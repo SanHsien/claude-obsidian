@@ -28,8 +28,19 @@ SKIP_NAMES = {
     "dependency-freshness-report.md",
 }
 
-FENCE_PATTERN = re.compile(r"(?ms)^[ \t]*(```|~~~).*?^[ \t]*\1[^\n]*$")
-INLINE_CODE_PATTERN = re.compile(r"(`+)(?!`).*?(?<!`)\1(?!`)", re.DOTALL)
+# CommonMark: a fence is 3+ backticks or tildes; a backtick fence's info string
+# cannot contain a backtick (so "```x``` text" is inline code, not a fence), and
+# the closing run uses the same character and is at least as long.
+FENCE_PATTERN = re.compile(
+    r"(?ms)^[ ]{0,3}(?P<fence>`{3,}(?=[^`\n]*$)|~{3,})[^\n]*\n"
+    r".*?"
+    r"^[ ]{0,3}(?P=fence)[`~]*[ \t]*$"
+)
+# A code span opens and closes with backtick runs of equal length and never
+# crosses a blank line, so a stray backtick cannot swallow a later paragraph.
+INLINE_CODE_PATTERN = re.compile(
+    r"(?<!`)(?P<run>`+)(?!`)(?:(?!\n[ \t]*\n)[\s\S])*?(?<!`)(?P=run)(?!`)"
+)
 
 FORK_DOCUMENTS = [
     ROOT / "AGENTS.md",

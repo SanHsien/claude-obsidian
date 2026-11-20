@@ -291,26 +291,49 @@ def test_release_allowlist_excludes_fork_docs() -> None:
         assert name in excluded
 
 
-def _host_instruction_files() -> list[Path]:
-    """Every tracked file that sends a host to `AGENTS.md` is a host entry point.
+# Tracked files that mention AGENTS.md without being a host entry point. This
+# list fails closed: a new file that mentions AGENTS.md is treated as a host
+# file (and must carry the overlay) until someone decides it is not one here.
+NOT_HOST_FILES = {
+    ".github/workflows/fork-maintenance.yml",  # runs the gate, not read by a host
+    "CHANGELOG.md",
+    "FORK.md",  # the overlay itself
+    "README.md",  # product landing page; overlay checked by its own test
+    "RELEASE_MANIFEST.json",
+    "REVIEW.md",
+    "SHA256SUMS",
+    "config/product-contract.json",
+    "config/release-allowlist.json",
+}
+
+
+def _host_instruction_files(root: Path = ROOT) -> list[Path]:
+    """Every tracked file that points a host at `AGENTS.md` is a host entry point.
 
     Discovered from content, not listed by hand: upstream adds and renames host
     adapters (GEMINI.md went away, ZCODE.md arrived) and a hand-kept list
-    silently stopped covering the new one.
+    silently stopped covering the new one. Any mention counts, not one wording
+    ("Read `AGENTS.md`", "Follow AGENTS.md", ...); known non-hosts are exempted.
     """
     result = subprocess.run(
         [
-            "git", "grep", "-l", "-I", "--fixed-strings", "Read `AGENTS.md`",
-            # Overlay tooling and fork docs quote the phrase; they are not hosts.
+            "git", "grep", "-l", "-I", "--fixed-strings", "AGENTS.md",
+            # Overlay tooling and fork docs quote the name; they are not hosts.
             "--", ".", ":!tools", ":!docs/fork",
         ],
-        cwd=ROOT,
+        cwd=root,
         capture_output=True,
         text=True,
         encoding="utf-8",
-        check=True,
+        check=False,
     )
-    return [ROOT / line for line in result.stdout.splitlines() if line]
+    # git grep exits 1 for "no match"; anything else means the search failed.
+    assert result.returncode in (0, 1), result.stderr
+    return [
+        root / line
+        for line in result.stdout.splitlines()
+        if line and line not in NOT_HOST_FILES
+    ]
 
 
 def test_host_instruction_files_have_fork_overlay() -> None:
@@ -396,3 +419,65 @@ def test_an_image_link_is_reported_once(tmp_path: Path, monkeypatch) -> None:
 
     assert len(problems) == 2
     assert len(set(problems)) == 2
+
+
+def test_inline_code_does_not_cross_a_blank_line(tmp_path: Path, monkeypatch) -> None:
+    """A lone backtick must not pair with one in a later paragraph: CommonMark
+    code spans never span a blank line, and the link between them is real."""
+    monkeypatch.setattr(check_links, "ROOT", tmp_path)
+    doc = tmp_path / "doc.md"
+    doc.write_text(
+        "A stray ` backtick.\n\n[real](gone.md)\n\nAnother ` backtick.\n",
+        encoding="utf-8",
+    )
+
+    problems = check_links.check_document(doc)
+
+    assert len(problems) == 1
+    assert "gone.md" in problems[0]
+
+
+def test_inline_code_needs_equal_backtick_runs(tmp_path: Path, monkeypatch) -> None:
+    """`` opens a span that only `` closes; a single ` inside does not end it,
+    and a run of a different length does not close it."""
+    monkeypatch.setattr(check_links, "ROOT", tmp_path)
+    doc = tmp_path / "doc.md"
+    doc.write_text(
+        "``a ` [x](quoted.md) b`` then [y](gone.md) and ``` lone\n",
+        encoding="utf-8",
+    )
+
+    problems = check_links.check_document(doc)
+
+    assert len(problems) == 1
+    assert "gone.md" in problems[0]
+
+
+def test_backtick_line_with_backticks_in_info_is_not_a_fence(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """A backtick fence's info string cannot contain backticks, so a line like
+    "```x``` inline" is inline code, not a fence that hides the rest of the file."""
+    monkeypatch.setattr(check_links, "ROOT", tmp_path)
+    doc = tmp_path / "doc.md"
+    doc.write_text(
+        "```x``` inline code\n\n[real](gone.md)\n\n```\n[y](fenced.md)\n```\n",
+        encoding="utf-8",
+    )
+
+    problems = check_links.check_document(doc)
+
+    assert len(problems) == 1
+    assert "gone.md" in problems[0]
+
+
+def test_host_discovery_does_not_depend_on_one_wording(tmp_path: Path) -> None:
+    """A new adapter worded "Follow AGENTS.md" is still a host entry point; the
+    discovery must not hinge on the exact phrase upstream happened to use."""
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    (tmp_path / "NEWHOST.md").write_text("Follow AGENTS.md first.\n", encoding="utf-8")
+    subprocess.run(["git", "add", "NEWHOST.md"], cwd=tmp_path, check=True)
+
+    found = {path.name for path in _host_instruction_files(tmp_path)}
+
+    assert "NEWHOST.md" in found

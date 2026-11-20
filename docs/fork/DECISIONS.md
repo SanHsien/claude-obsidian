@@ -286,7 +286,8 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 
 - **決定**：`ZCODE.md` 開頭加上與其他宿主指示檔同類的 fork overlay，產品正文與 Public canonical
   上游 URL 保留。`tools/test_fork_overlay.py::test_host_instruction_files_have_fork_overlay` 改成從內容
-  探索宿主指示檔（凡是要宿主「Read `AGENTS.md`」的追蹤檔），不再手寫清單。
+  探索宿主指示檔（凡是提到 `AGENTS.md` 的追蹤檔，不限措辭；已知的非宿主檔列在測試的
+  `NOT_HOST_FILES`，新檔預設當宿主檔，fail closed），不再手寫宿主清單。
 - **理由**：`GEMINI.md` 是本 fork 依維護者 2026-10-24 指示刪除的（上游仍保留），`ZCODE.md` 則是
   v3.0.1 帶進來的上游 adapter，而且在 `config/release-allowlist.json` 的 `include_files`。刪 `GEMINI.md`
   時測試只從清單拿掉一項，沒有人把新的 adapter 補進去，R-15 對它已經沒有保護。手寫清單會再漏，
