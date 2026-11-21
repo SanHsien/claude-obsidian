@@ -4,6 +4,7 @@
 只驗 overlay 文件：AGENTS.md、FORK.md、NOTICE.md、REVIEW.md、ROADMAP.md、
 SECURITY.md、CONTRIBUTING.md、CODE_OF_CONDUCT.md、docs/fork/、
 以及已加 overlay 的 GitHub 模板與宿主指示（copilot／cursor／windsurf／ZCODE.md）。
+以 markdown-it-py（CommonMark + GFM 表格）解析；
 程式碼區塊與 inline code 裡的連結語法是範例，不檢查。
 不掃根目錄 README.md：那是上游英文產品契約，由產品 CI 負責。
 不掃 CLAUDE.md：本產品 checkout 依契約不得有該檔。
@@ -15,32 +16,20 @@ from __future__ import annotations
 
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from urllib.parse import unquote
 
+from markdown_it import MarkdownIt
+from markdown_it.token import Token
+
 ROOT = Path(__file__).resolve().parent.parent
-LINK_PATTERN = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
-IMAGE_PATTERN = re.compile(r"!\[[^\]]*\]\(([^)]+)\)")
 HTML_SRC_PATTERN = re.compile(r"""(?is)<img[^>]+src=["']([^"']+)["']""")
 SKIP_PREFIXES = ("http://", "https://", "mailto:", "tel:", "#")
 SKIP_NAMES = {
     "upstream-review-report.md",
     "dependency-freshness-report.md",
 }
-
-# CommonMark: a fence is 3+ backticks or tildes; a backtick fence's info string
-# cannot contain a backtick (so "```x``` text" is inline code, not a fence), and
-# the closing run uses the same character and is at least as long.
-FENCE_PATTERN = re.compile(
-    r"(?ms)^[ ]{0,3}(?P<fence>`{3,}(?=[^`\n]*$)|~{3,})[^\n]*\n"
-    r".*?"
-    r"^[ ]{0,3}(?P=fence)[`~]*[ \t]*$"
-)
-# A code span opens and closes with backtick runs of equal length and never
-# crosses a blank line, so a stray backtick cannot swallow a later paragraph.
-INLINE_CODE_PATTERN = re.compile(
-    r"(?<!`)(?P<run>`+)(?!`)(?:(?!\n[ \t]*\n)[\s\S])*?(?<!`)(?P=run)(?!`)"
-)
 
 FORK_DOCUMENTS = [
     ROOT / "AGENTS.md",
@@ -57,9 +46,63 @@ FORK_DOCUMENTS = [
 ]
 
 
-def _strip_code(text: str) -> str:
-    """Link syntax quoted in a fence or code span is an example, not a link."""
-    return INLINE_CODE_PATTERN.sub("", FENCE_PATTERN.sub("", text))
+# Read Markdown with a real CommonMark + GFM table parser, the way GitHub
+# renders it. Hand-written regexes for code spans and fences kept hiding real
+# links (HTML blocks, tables, list items opening with a heading, tabs after ">"),
+# so the parser decides what is code; links quoted in code are never tokens.
+MARKDOWN = MarkdownIt("commonmark", {"html": True}).enable("table")
+FENCE_CLOSE = re.compile(r"[ \t>]*(?P<fence>`{3,}|~{3,})[ \t]*$")
+
+
+def _walk(tokens: list[Token]) -> Iterator[Token]:
+    for token in tokens:
+        yield token
+        if token.children:
+            yield from _walk(token.children)
+
+
+def _fence_is_closed(token: Token, lines: list[str]) -> bool:
+    """A closed fence's source range ends on its closing line."""
+    start, end = token.map or (0, 0)
+    if end - start < 2 or end > len(lines):
+        return False
+    closer = FENCE_CLOSE.match(lines[end - 1])
+    return bool(
+        closer
+        and closer.group("fence")[0] == token.markup[0]
+        and len(closer.group("fence")) >= len(token.markup)
+    )
+
+
+def extract_targets(text: str) -> tuple[list[tuple[str, bool]], int | None]:
+    """Return the link targets of a document and the line of an unclosed fence.
+
+    Each target is (destination, is_markdown): Markdown links and images carry a
+    parsed destination (titles already removed), an HTML <img src> is the raw
+    attribute. CommonMark runs an unclosed fence to the end of its container and
+    hides every link after it; that is almost always a typo, so the caller
+    reports it instead of passing silently.
+    """
+    lines = text.splitlines()
+    targets: list[tuple[str, bool]] = []
+    unclosed: int | None = None
+    for token in _walk(MARKDOWN.parse(text)):
+        if token.type == "link_open":
+            targets.append((str(token.attrGet("href") or ""), True))
+        elif token.type == "image":
+            targets.append((str(token.attrGet("src") or ""), True))
+        elif token.type in ("html_block", "html_inline"):
+            targets.extend(
+                (match.group(1), False)
+                for match in HTML_SRC_PATTERN.finditer(token.content)
+            )
+        elif (
+            token.type == "fence"
+            and unclosed is None
+            and not _fence_is_closed(token, lines)
+        ):
+            unclosed = (token.map or (0, 0))[0] + 1
+    return targets, unclosed
 
 
 def iter_documents() -> list[Path]:
@@ -114,13 +157,11 @@ def _missing_relative(path: Path, target: str, *, has_title: bool = True) -> str
 
 def check_document(path: Path) -> list[str]:
     problems: list[str] = []
-    text = _strip_code(path.read_text(encoding="utf-8"))
-    # `![a](b)` also contains the link `[a](b)`; report each target once.
-    targets = dict.fromkeys(
-        (match.group(1), pattern is not HTML_SRC_PATTERN)
-        for pattern in (LINK_PATTERN, IMAGE_PATTERN, HTML_SRC_PATTERN)
-        for match in pattern.finditer(text)
-    )
+    found, unclosed = extract_targets(path.read_text(encoding="utf-8"))
+    if unclosed is not None:
+        problems.append(f"第 {unclosed} 行的 code fence 沒有收尾，之後的連結都不會被檢查")
+    # The same target linked twice is one problem.
+    targets = dict.fromkeys(found)
     for target, has_title in targets:
         missing = _missing_relative(path, target, has_title=has_title)
         if missing:
