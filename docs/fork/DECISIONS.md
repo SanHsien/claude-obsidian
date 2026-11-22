@@ -316,3 +316,16 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
   是 fork 自有檔，兩者都沒掃。補掃 `ROADMAP.md` 會撞上它自己記著的 `<img src="a b.png">` 誤報，所以
   路線圖那一列一併做掉。本檔是 fork 自有版本，與 repo-fleet-ops 的 `tools/check_links.py` 不同（後者
   掃全部追蹤的 Markdown），所以在這裡修。
+
+## 2026-11-22：上游審查（0 commit / PR #218–#219 / issue #216–#217）
+
+上游 `main` 無新 commit，tip 仍為 `2e54556`。審查 PR #218–#219 與 issue #216–#217：
+
+| 項目 | 結論 | 理由（可查證） | 重看條件 |
+| --- | --- | --- | --- |
+| PR #218（`fix: run Obsidian lifecycle hooks in Codex`） | **拒絕** | 上游已於 `2026-11-22T02:45:02Z` 未合併關閉（`CLOSED`, `mergedAt: null`, head `ad9ba256dd43b4e34b969d1efae111e860641c26`）；改動橫跨 `README.md`、`docs/install-guide.md`、`config/product-contract.json`、`config/release-allowlist.json`、`claude_obsidian/package_validation.py`、`claude_obsidian/release.py` 與 `.codex-plugin/plugin.json` / `hooks/codex.json`。依 fork 原則不在上游合併前自行擴寫產品樹與外掛契約 | 上游重新開啟並合併 Codex lifecycle hooks 支援，或維護者明確要求在 Codex 掛載該外掛 hook |
+| PR #219（`feat(bm25): normalize Arabic diacritics, tatweel, and Alef variants in scripts/bm25-index.py`） | **延後（釘進 `monitored`）** | 上游仍為 `OPEN`（head `24706a1bce75a0b16738f5337352caf343e77600`）；僅針對含阿拉伯文字串於 `scripts/bm25-index.py` 的 `tokenize()` 做音符／tatweel／Alef 正規化（無測試檔、對非阿拉伯文為 no-op，安全檢視無異常）。本 fork 目前無阿拉伯文 vault 需求，不在上游合併前提前分歧改寫 `scripts/` 產品樹 | 上游合併／關閉／更新 head SHA（由 `monitored` 監看），或本 fork 出現阿拉伯文 vault BM25 檢索需求 |
+| issue #216（`[feature] Opt-in Firecrawl runner for the url capture adapter`） | **拒絕** | 第三方團隊（Firecrawl）提出之功能提案（`OPEN`，尚無實作）；建議將 URL 送往外部託管端點 `api.firecrawl.dev`（`/v2/scrape`）抓取，連提案本身亦承認無法滿足 `PRIVACY.md` 本機 DNS pinning 與重定向驗證規範。新增外部網路端點與第三方服務依賴，不符本 fork 本機優先／零外傳原則 | 上游正式採納並實作且不破壞預設無網路核心，且維護者明確需要託管網址抓取 |
+| issue #217（`Scaling issues under automated capture`） | **拒絕（不在本 fork 提前改寫產品樹）** | `OPEN`（Linux `bwrap`／systemd 8,000+ 頁自動化擷取回報）。實查現行 `v3.0.1` 程式碼：`claude_obsidian/transaction.py:1394` `_process_alive` 仍以 `os.kill(pid, 0)` 判活且 `PermissionError` 回傳 `True`、`claude_obsidian/hook_adapter.py:29` 具 `MAX_TRANSACTION_SCAN = 256`、`scripts/contextual-prefix.py:415` 具 `stale_chunks_for_page`；但本 fork 原生 Windows 禁止寫入 vault（僅 WSL 可寫），且四項建議涉及跨平台鎖識別、journal prune 指令與 chunk 索引格式，屬應由上游統一演進之核心架構變更 | 上游釋出對應修補 PR 或新版本，或維護者在 WSL 自動化擷取實務遭遇鎖卡死／掃描退化 |
+
+**水位**：commit `2e54556`、PR 215 → 219（`pr#219` 釘進 `monitored`）、issue 212 → 217、`reviewed_date` `2026-11-22`。
