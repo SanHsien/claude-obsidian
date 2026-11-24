@@ -329,3 +329,17 @@ page-type 詞彙、issue #183/#184）都已含在 v3.0.x 內，一併落地，�
 | issue #217（`Scaling issues under automated capture`） | **拒絕（不在本 fork 提前改寫產品樹）** | `OPEN`（Linux `bwrap`／systemd 8,000+ 頁自動化擷取回報）。實查現行 `v3.0.1` 程式碼：`claude_obsidian/transaction.py:1394` `_process_alive` 仍以 `os.kill(pid, 0)` 判活且 `PermissionError` 回傳 `True`、`claude_obsidian/hook_adapter.py:29` 具 `MAX_TRANSACTION_SCAN = 256`、`scripts/contextual-prefix.py:415` 具 `stale_chunks_for_page`；但本 fork 原生 Windows 禁止寫入 vault（僅 WSL 可寫），且四項建議涉及跨平台鎖識別、journal prune 指令與 chunk 索引格式，屬應由上游統一演進之核心架構變更 | 上游釋出對應修補 PR 或新版本，或維護者在 WSL 自動化擷取實務遭遇鎖卡死／掃描退化 |
 
 **水位**：commit `2e54556`、PR 215 → 219（`pr#219` 釘進 `monitored`）、issue 212 → 217、`reviewed_date` `2026-11-22`。
+
+## 2026-11-24：GitHub 因 Actions 用量過大停用本 fork 的 workflows；重新啟用前削減 push 觸發
+
+**原因**：GitHub 以 Actions 用量過大為由停用本 fork 的 workflows（AIHOT、OpenMontage、reverse-skill 於 2026-11-23 同案，做法見 AIHOT 提交 `713caec`）。每次 push 都跑 Hermetic verification（2 OS × 4 個 Python 版本共 8 個 job）、Fork maintenance（2 OS）與 CodeQL，連只改維護紀錄的提交也跑。
+
+**決定**：
+- `test.yml`：push（僅 main）對只改 `ROADMAP.md`、`REVIEW.md`、`FORK.md`、`NOTICE.md`、`upstream-review-report.md`、`docs/fork/UPSTREAM.md`、`docs/fork/DECISIONS.md`、`tools/upstream_baseline.json` 的提交略過。
+- `fork-maintenance.yml`：原本就有 `paths` 白名單；從中移除 `FORK.md`、`NOTICE.md`、`REVIEW.md`，並以 `!` 排除 `docs/fork/UPSTREAM.md`、`docs/fork/DECISIONS.md`、`tools/upstream_baseline.json`（它們仍屬 `tools/**`、`docs/fork/**` 範圍）。
+- `codeql.yml`：push 只在 `**/*.py` 或該 workflow 變動時跑；排程（每週一）不變。
+- `pull_request` 一律不加篩選，必要檢查不會卡在 pending；紀錄類改動仍由 PR 與下一次程式碼 push 涵蓋。
+- `upstream-check.yml` 不改：push 已限 main 且只在檢查器、`upstream_baseline.json` 與 workflow 本身變動時觸發，排程每週一次。
+
+**還原**：移除標有 `Fork patch (docs/fork/DECISIONS.md 2026-11-24, Actions usage)` 的篩選。
+**重審條件**：重新啟用後用 `gh run list` 量一次，若仍被限制再降頻或縮小 push 範圍。

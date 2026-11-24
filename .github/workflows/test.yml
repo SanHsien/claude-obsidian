@@ -1,8 +1,19 @@
 name: Hermetic verification
 
 on:
+  # Fork patch (docs/fork/DECISIONS.md 2026-11-24, Actions usage): pushes skip changes that only touch fork notes and records.
+  # Pull requests stay unfiltered so required checks never stick pending.
   push:
     branches: [main]
+    paths-ignore:
+      - "ROADMAP.md"
+      - "REVIEW.md"
+      - "FORK.md"
+      - "NOTICE.md"
+      - "upstream-review-report.md"
+      - "docs/fork/UPSTREAM.md"
+      - "docs/fork/DECISIONS.md"
+      - "tools/upstream_baseline.json"
   # Every pull request, including one stacked on another PR's branch, gets
   # the full matrix before it can land anywhere that later reaches main.
   pull_request:

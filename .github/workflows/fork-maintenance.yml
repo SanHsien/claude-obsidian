@@ -1,19 +1,22 @@
 name: Fork maintenance
 
 on:
+  # Fork patch (docs/fork/DECISIONS.md 2026-11-24, Actions usage): pushes skip fork notes and records (FORK.md, NOTICE.md, REVIEW.md,
+  # docs/fork/UPSTREAM.md, docs/fork/DECISIONS.md, tools/upstream_baseline.json).
+  # Pull requests stay unfiltered so required checks never stick pending.
   push:
     branches: [main]
     paths:
-      - FORK.md
-      - NOTICE.md
-      - REVIEW.md
       - AGENTS.md
       - README.md
       - SECURITY.md
       - CONTRIBUTING.md
       - CODE_OF_CONDUCT.md
       - docs/fork/**
+      - "!docs/fork/UPSTREAM.md"
+      - "!docs/fork/DECISIONS.md"
       - tools/**
+      - "!tools/upstream_baseline.json"
       - requirements-dev.txt
       - pyproject.toml
       - .github/workflows/fork-maintenance.yml
